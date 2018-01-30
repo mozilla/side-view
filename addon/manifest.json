@@ -1,0 +1,34 @@
+{
+    "manifest_version": 2,
+    "name": "Open In Sidebar",
+    "version": "0.1.0",
+    "description": "Open a mobile view of a page in the sidebar",
+    "author": "Ian Bicking",
+    "homepage_url": "https://github.com/ianb/open-in-sidebar",
+    "applications": {
+      "gecko": {
+        "id": "open-in-sidebar@mozilla.org",
+        "strict_min_version": "57.0a1"
+      }
+    },
+    "background": {
+      "scripts": [
+        "background.js"
+      ]
+    },
+    "sidebar_action": {
+      "default_title": "Page",
+      "default_panel": "sidebar.html"
+    },
+    "web_accessible_resources": [
+    ],
+    "permissions": [
+      "activeTab",
+      "tabs",
+      "<all_urls>",
+      "storage",
+      "contextMenus",
+      "webRequest",
+      "webRequestBlocking"
+    ]
+  }
