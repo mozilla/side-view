@@ -1,13 +1,13 @@
 {
     "manifest_version": 2,
-    "name": "Open In Sidebar",
+    "name": "Tab Split 2",
     "version": "0.1.0",
     "description": "Open a mobile view of a page in the sidebar",
     "author": "Ian Bicking",
-    "homepage_url": "https://github.com/ianb/open-in-sidebar",
+    "homepage_url": "https://github.com/mozilla/tab-split-2",
     "applications": {
       "gecko": {
-        "id": "open-in-sidebar@mozilla.org",
+        "id": "tab-split-2@mozilla.org",
         "strict_min_version": "57.0a1"
       }
     },
@@ -17,7 +17,7 @@
       ]
     },
     "sidebar_action": {
-      "default_title": "Page",
+      "default_title": "Tab Split",
       "default_panel": "sidebar.html"
     },
     "web_accessible_resources": [
