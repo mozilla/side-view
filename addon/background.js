@@ -24,7 +24,14 @@ browser.contextMenus.create({
 browser.contextMenus.onClicked.addListener((info, tab) => {
   let url = info.linkUrl || tab.url;
   let title = info.linkText || tab.title || "Page";
-  sidebarOpenAndSend({type: "browse", url}).catch((error) => {
+  browser.sidebarAction.open().then(() => {
+    return browser.windows.getCurrent();
+  }).then((windowInfo) => {
+    let message = {type: "browse", url, windowId: windowInfo.id};
+    return retry(() => {
+      return browser.runtime.sendMessage(message);
+    }, {times: 3, wait: 50});
+  }).catch((error) => {
     console.error("Error setting panel to page:", error);
   });
 });
@@ -61,16 +68,6 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
     }
   }
 }, requestFilter, ["blocking", "responseHeaders"]);
-
-// Used to open the sidebar, then try to send a message.
-// This requires retries because the sidebar page takes a little time to load and respond to messages.
-function sidebarOpenAndSend(message) {
-  return browser.sidebarAction.open().then(() => {
-    return retry(() => {
-      return browser.runtime.sendMessage(message);
-    }, {times: 3, wait: 50});
-  });
-}
 
 function retry(attempter, options) {
   let times = options.times || 3;

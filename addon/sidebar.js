@@ -1,4 +1,8 @@
 browser.runtime.onMessage.addListener((message) => {
+  if (message.windowId && thisWindowId && message.windowId != thisWindowId) {
+    // Not intended for this window
+    return;
+  }
   if (message.type == "browse") {
     displayPage(message.url);
   } else {
@@ -25,4 +29,9 @@ function element(selector) {
 
 element("#home").addEventListener("click", () => {
   displayHome();
+});
+
+let thisWindowId;
+browser.windows.getCurrent().then((windowInfo) => {
+  thisWindowId = windowInfo.id;
 });
