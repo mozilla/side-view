@@ -11,3 +11,7 @@ Or: install [`web-ext`](https://github.com/mozilla/web-ext) (like `npm i -g web-
 ## Using
 
 This adds a context menu item: **Open in sidebar** or **Open link in sidebar**. Select that, and the sidebar will be opened with a mobile view of the page.
+
+## Credits
+
+[Anthony_f](https://addons.mozilla.org/en-US/firefox/user/Anthony_f/)'s [Sidebar for Google Search](https://addons.mozilla.org/en-US/firefox/addon/sidebar-for-google-search/) inspired this add-on's approach.
