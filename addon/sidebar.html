@@ -4,12 +4,51 @@
     <meta charset="UTF-8">
     <title>Sidebar</title>
     <style>
-      body {margin: 1em;}
+      body, html {
+        height: 100%;
+        width: 100%;
+      }
+      #onboarding {
+        margin: 1em;
+      }
+      #browser-container {
+        width: 100%;
+        height: 100%;
+      }
+      iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+      }
+      #iframe-container {
+        height: 100%;
+        width: 100%;
+        padding-bottom: 20px;
+      }
+      #toolbar {
+        width: 100%;
+        position: absolute;
+        bottom: 0px;
+        height: 20px;
+        border-top: 1px solid #000;
+      }
     </style>
   </head>
   <body>
-    <p>
+    <p id="onboarding">
       Use the context (right-click) menu to open pages in this sidebar.
     </p>
+
+    <div id="browser-container" style="display: none">
+      <div id="iframe-container">
+        <iframe id="browser-iframe" src="about:blank"></iframe>
+      </div>
+      <div id="toolbar">
+        <button id="home">home</button>
+        <span id="browser-domain"></span>
+      </div>
+    </div>
+
+    <script src="sidebar.js"></script>
   </body>
 </html>
