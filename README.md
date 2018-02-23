@@ -1,4 +1,4 @@
-# Open-in-sidebar
+# Tab Split 2
 
 An experiment with opening mobile views of pages in the sidebar
 
@@ -6,7 +6,7 @@ An experiment with opening mobile views of pages in the sidebar
 
 Check out the repository. Go to `about:debugging` in Firefox, and select **Load Temporary Add-on**. Select a file in the `addon/` directory.
 
-Or: install [`web-ext`](https://github.com/mozilla/web-ext) (like `npm i -g web-ext`) and run `web-ext run -s addon/ --browser-console`
+Or: install [`web-ext`](https://github.com/mozilla/web-ext) (like `npm i -g web-ext`) and run `web-ext run -s addon/ --browser-console -f nightly`
 
 ## Using
 
