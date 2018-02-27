@@ -24,9 +24,25 @@ browser.contextMenus.create({
 browser.contextMenus.onClicked.addListener((info, tab) => {
   let url = info.linkUrl || tab.url;
   let title = info.linkText || tab.title || "Page";
-  sidebarOpenAndSend({type: "browse", url}).catch((error) => {
+  browser.sidebarAction.open().then(() => {
+    return browser.windows.getCurrent();
+  }).then((windowInfo) => {
+    let desktop = !!desktopHostnames[(new URL(url)).hostname];
+    let message = {type: "browse", url, windowId: windowInfo.id, desktop};
+    return retry(() => {
+      return browser.runtime.sendMessage(message);
+    }, {times: 3, wait: 50});
+  }).catch((error) => {
     console.error("Error setting panel to page:", error);
   });
+});
+
+browser.runtime.onMessage.addListener((message) => {
+  if (message.type == "setDesktop") {
+    return setDesktop(message.desktop, message.url);
+  } else {
+    console.error("Unexpected message to background:", message);
+  }
 });
 
 // This is a RequestFilter: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/webRequest/RequestFilter
@@ -38,8 +54,33 @@ let requestFilter = {
   urls: ["http://*/*", "https://*/*"],
 };
 
+let desktopHostnames = {};
+
+browser.storage.sync.get("desktopHostnames").then((result) => {
+  desktopHostnames = result.desktopHostnames || {};
+}).catch((error) => {
+  console.error("Error retrieving desktopHostnames:", error);
+});
+
+function setDesktop(desktop, url) {
+  let hostname = (new URL(url)).hostname;
+  if (desktop) {
+    desktopHostnames[hostname] = true;
+  } else {
+    delete desktopHostnames[hostname];
+  }
+  browser.storage.sync.set({desktopHostnames}).catch((error) => {
+    console.error("Error setting desktopHostnames:", desktopHostnames);
+  });
+  return Promise.resolve();
+}
+
 // Add a mobile header to outgoing requests
 browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
+  let hostname = (new URL(info.url)).hostname;
+  if (desktopHostnames[hostname]) {
+    return;
+  }
   let headers = info.requestHeaders;
   for (let i = 0; i < headers.length; i++) {
     let name = headers[i].name.toLowerCase();
@@ -61,16 +102,6 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
     }
   }
 }, requestFilter, ["blocking", "responseHeaders"]);
-
-// Used to open the sidebar, then try to send a message.
-// This requires retries because the sidebar page takes a little time to load and respond to messages.
-function sidebarOpenAndSend(message) {
-  return browser.sidebarAction.open().then(() => {
-    return retry(() => {
-      return browser.runtime.sendMessage(message);
-    }, {times: 3, wait: 50});
-  });
-}
 
 function retry(attempter, options) {
   let times = options.times || 3;
