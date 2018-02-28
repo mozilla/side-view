@@ -14,12 +14,7 @@ function displayPage(url, desktop) {
 async function displayHome() {
   element("#browser-container").style.display = "none";
   element("#onboarding").style.display = "";
-  let windowInfo;
-  try {
-    windowInfo = await browser.windows.getCurrent({populate: true});
-  } catch (error) {
-    console.error("Error getting window info:", error);
-  }
+  const windowInfo = await browser.windows.getCurrent({populate: true});
   const tabList = element("#tabs");
   tabList.innerHTML = "";
   for (let tab of windowInfo.tabs) {

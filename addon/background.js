@@ -24,17 +24,13 @@ browser.contextMenus.create({
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
   let url = info.linkUrl || tab.url;
   // let title = info.linkText || tab.title || "Page";
-  try {
-    await browser.sidebarAction.open();
-    const windowInfo = await browser.windows.getCurrent();
-    let desktop = !!desktopHostnames[(new URL(url)).hostname];
-    let message = {type: "browse", url, windowId: windowInfo.id, desktop};
-    return retry(() => {
-      return browser.runtime.sendMessage(message);
-    }, {times: 3, wait: 50});
-  } catch (error) {
-    console.error("Error setting panel to page:", error);
-  }
+  await browser.sidebarAction.open();
+  const windowInfo = await browser.windows.getCurrent();
+  let desktop = !!desktopHostnames[(new URL(url)).hostname];
+  let message = {type: "browse", url, windowId: windowInfo.id, desktop};
+  return retry(() => {
+    return browser.runtime.sendMessage(message);
+  }, {times: 3, wait: 50});
 });
 
 browser.runtime.onMessage.addListener((message) => {
@@ -56,17 +52,14 @@ let requestFilter = {
 
 let desktopHostnames = {};
 
-function setDesktop(desktop, url) {
+async function setDesktop(desktop, url) {
   let hostname = (new URL(url)).hostname;
   if (desktop) {
     desktopHostnames[hostname] = true;
   } else {
     delete desktopHostnames[hostname];
   }
-  browser.storage.sync.set({desktopHostnames}).catch((error) => {
-    console.error("Error setting desktopHostnames:", desktopHostnames);
-  });
-  return Promise.resolve();
+  await browser.storage.sync.set({desktopHostnames});
 }
 
 // Add a mobile header to outgoing requests
@@ -121,12 +114,8 @@ function timeout(time) {
 }
 
 async function init() {
-  try {
-    const result = browser.storage.sync.get("desktopHostnames");
-    desktopHostnames = result.desktopHostnames || {};
-  } catch (error) {
-    console.error("Error retrieving desktopHostnames:", error);
-  }
+  const result = await browser.storage.sync.get("desktopHostnames");
+  desktopHostnames = result.desktopHostnames || {};
 }
 
 init();
