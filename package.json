@@ -8,6 +8,9 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "eslint": "^4.16.0",
+    "eslint-plugin-mozilla": "^0.6.0",
+    "eslint-plugin-no-unsanitized": "^2.0.2",
     "npm-run-all": "^4.1.2",
     "web-ext": "^2.4.0"
   },
@@ -19,6 +22,8 @@
   },
   "scripts": {
     "start": "npm-run-all build run",
+    "lint": "npm-run-all lint:*",
+    "lint:js": "eslint addon",
     "build": "mkdir -p ./Profile && web-ext build --source-dir=addon --overwrite-dest",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
     "run": "web-ext run --source-dir=addon -p ./Profile --browser-console -f nightly"

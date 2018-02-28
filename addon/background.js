@@ -23,7 +23,7 @@ browser.contextMenus.create({
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
   let url = info.linkUrl || tab.url;
-  let title = info.linkText || tab.title || "Page";
+  // let title = info.linkText || tab.title || "Page";
   browser.sidebarAction.open().then(() => {
     return browser.windows.getCurrent();
   }).then((windowInfo) => {
@@ -39,7 +39,7 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 
 browser.runtime.onMessage.addListener((message) => {
   if (message.type == "setDesktop") {
-    return setDesktop(message.desktop, message.url);
+    setDesktop(message.desktop, message.url);
   } else {
     console.error("Unexpected message to background:", message);
   }
@@ -79,16 +79,17 @@ function setDesktop(desktop, url) {
 browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
   let hostname = (new URL(info.url)).hostname;
   if (desktopHostnames[hostname]) {
-    return;
+    return {};
   }
   let headers = info.requestHeaders;
   for (let i = 0; i < headers.length; i++) {
     let name = headers[i].name.toLowerCase();
-    if (name === 'user-agent') {
+    if (name === "user-agent") {
       headers[i].value = USER_AGENT;
       return {"requestHeaders": headers};
     }
   }
+  return {};
 }, requestFilter, ["blocking", "requestHeaders"]);
 
 // Remove X-Frame-Options to allow any page to be embedded in an iframe
@@ -96,11 +97,12 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
   let headers = info.responseHeaders;
   for (let i = 0; i < headers.length; i++) {
     let name = headers[i].name.toLowerCase();
-    if (name === 'x-frame-options' || name === 'frame-options') {
+    if (name === "x-frame-options" || name === "frame-options") {
       headers.splice(i, 1);
       return {"responseHeaders": headers};
     }
   }
+  return {};
 }, requestFilter, ["blocking", "responseHeaders"]);
 
 function retry(attempter, options) {
