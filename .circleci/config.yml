@@ -1,0 +1,32 @@
+version: 2.0
+jobs:
+    package:
+        docker:
+            - image: circleci/node:8.9.4
+        steps:
+            - checkout
+            - restore_cache:
+                keys:
+                    - node-modules-
+            - run:
+                name: install
+                command: npm install
+            - run:
+                name: package
+                command: npm run package
+            - save_cache:
+                key: node-modules-
+                paths:
+                    - node_modules
+            - store_artifacts:
+                path: addon.xpi
+            - persist_to_workspace:
+                root: .
+                paths:
+                    - ./*
+workflows:
+    version: 2
+    package:
+        jobs:
+            - package
+
