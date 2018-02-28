@@ -6,7 +6,8 @@ jobs:
     steps:
       - checkout
       - restore_cache:
-        key: node-modules-
+        keys:
+          - node-modules-
       - run:
         - npm install
         - npm run package
