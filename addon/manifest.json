@@ -13,6 +13,7 @@
     },
     "background": {
       "scripts": [
+        "build/testpilot-ga.js",
         "background.js"
       ]
     },

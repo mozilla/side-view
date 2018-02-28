@@ -6,7 +6,9 @@
   "bugs": {
     "url": "https://github.com/mozilla/tab-split-2/issues"
   },
-  "dependencies": {},
+  "dependencies": {
+    "testpilot-ga": "^0.3.0"
+  },
   "devDependencies": {
     "eslint": "^4.16.0",
     "eslint-plugin-mozilla": "^0.6.0",
@@ -24,7 +26,7 @@
     "start": "npm-run-all build run",
     "lint": "npm-run-all lint:*",
     "lint:js": "eslint addon",
-    "build": "web-ext build --source-dir=addon --overwrite-dest",
+    "build": "mkdir -p addon/build && cp $(node -e 'console.log(require.resolve(\"testpilot-ga\"))') addon/build/testpilot-ga.js && web-ext build --source-dir=addon --overwrite-dest",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
     "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console -f nightly"
   }

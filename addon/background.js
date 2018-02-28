@@ -6,6 +6,24 @@ const USER_AGENT = "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefo
 // Chrome for Android:
 //   Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19
 
+const manifest = browser.runtime.getManifest();
+
+const ga = new TestPilotGA({
+  an: "tab-split-2",
+  aid: manifest.applications.gecko.id,
+  aiid: "testpilot",
+  av: manifest.version,
+  cd19: "dev", // could be: local, dev, stage, or production
+  ds: "addon",
+  tid: "", // production value is "UA-77033033-7"
+});
+
+function sendEvent(...args) {
+  ga.sendEvent(...args);
+}
+
+sendEvent("startup", "startup", {ni: true});
+
 browser.contextMenus.create({
   id: "open-in-sidebar",
   title: "Open in sidebar",
@@ -23,10 +41,18 @@ browser.contextMenus.create({
 
 browser.contextMenus.onClicked.addListener((info, tab) => {
   let url = info.linkUrl || tab.url;
-  // let title = info.linkText || tab.title || "Page";
+  if (info.linkUrl) {
+    sendEvent("browse", "context-menu-link");
+  } else {
+    // FIXME: should distinguish between clicking in the page, and on the tab:
+    sendEvent("browse", "context-menu-page");
+  }
+  // FIXME: should send something in the event about whether the sidebar is already open
+  // FIXME: should send something in the event about whether tab.id === -1 (probably from the sidebar itself)
   browser.sidebarAction.open().then(() => {
     return browser.windows.getCurrent();
   }).then((windowInfo) => {
+    // FIXME: should send something in an event about whether the desktop has already been set
     let desktop = !!desktopHostnames[(new URL(url)).hostname];
     let message = {type: "browse", url, windowId: windowInfo.id, desktop};
     return retry(() => {
@@ -40,6 +66,8 @@ browser.contextMenus.onClicked.addListener((info, tab) => {
 browser.runtime.onMessage.addListener((message) => {
   if (message.type == "setDesktop") {
     setDesktop(message.desktop, message.url);
+  } else if (message.type == "sendEvent") {
+    ga.sendEvent(message.ec, message.ea, message.eventParams);
   } else {
     console.error("Unexpected message to background:", message);
   }
