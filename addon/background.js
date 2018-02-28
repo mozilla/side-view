@@ -129,4 +129,5 @@ async function init() {
   desktopHostnames = result.desktopHostnames || {};
 }
 
+init();
 
