@@ -123,10 +123,10 @@ function timeout(time) {
 async function init() {
   try {
     const result = browser.storage.sync.get("desktopHostnames");
+    desktopHostnames = result.desktopHostnames || {};
   } catch (error) {
     console.error("Error retrieving desktopHostnames:", error);
   }
-  desktopHostnames = result.desktopHostnames || {};
 }
 
 init();
