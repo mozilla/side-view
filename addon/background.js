@@ -21,20 +21,20 @@ browser.contextMenus.create({
   documentUrlPatterns: ["<all_urls>"]
 });
 
-browser.contextMenus.onClicked.addListener((info, tab) => {
+browser.contextMenus.onClicked.addListener(async (info, tab) => {
   let url = info.linkUrl || tab.url;
   // let title = info.linkText || tab.title || "Page";
-  browser.sidebarAction.open().then(() => {
-    return browser.windows.getCurrent();
-  }).then((windowInfo) => {
+  try {
+    await browser.sidebarAction.open();
+    const windowInfo = await browser.windows.getCurrent();
     let desktop = !!desktopHostnames[(new URL(url)).hostname];
     let message = {type: "browse", url, windowId: windowInfo.id, desktop};
     return retry(() => {
       return browser.runtime.sendMessage(message);
     }, {times: 3, wait: 50});
-  }).catch((error) => {
+  } catch (error) {
     console.error("Error setting panel to page:", error);
-  });
+  }
 });
 
 browser.runtime.onMessage.addListener((message) => {
@@ -55,12 +55,6 @@ let requestFilter = {
 };
 
 let desktopHostnames = {};
-
-browser.storage.sync.get("desktopHostnames").then((result) => {
-  desktopHostnames = result.desktopHostnames || {};
-}).catch((error) => {
-  console.error("Error retrieving desktopHostnames:", error);
-});
 
 function setDesktop(desktop, url) {
   let hostname = (new URL(url)).hostname;
@@ -105,18 +99,19 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
   return {};
 }, requestFilter, ["blocking", "responseHeaders"]);
 
-function retry(attempter, options) {
+async function retry(attempter, options) {
   let times = options.times || 3;
   let wait = options.wait || 100;
-  return attempter().catch((error) => {
+  try {
+    return await attempter();
+  } catch (error) {
     times--;
     if (times <= 0) {
       throw error;
     }
-    return timeout(wait).then(() => {
-      retry(attempter, {times, wait});
-    });
-  });
+    await timeout(wait);
+    return retry(attempter, {times, wait});
+  }
 }
 
 function timeout(time) {
@@ -124,3 +119,14 @@ function timeout(time) {
     setTimeout(resolve, time);
   });
 }
+
+async function init() {
+  try {
+    const result = browser.storage.sync.get("desktopHostnames");
+  } catch (error) {
+    console.error("Error retrieving desktopHostnames:", error);
+  }
+  desktopHostnames = result.desktopHostnames || {};
+}
+
+
