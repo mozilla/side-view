@@ -9,8 +9,11 @@ jobs:
         keys:
           - node-modules-
       - run:
-        - npm install
-        - npm run package
+        name: install
+        command: npm install
+      - run:
+        name: package
+        command: npm run package
       - save_cache:
         key: node-modules-
         paths:
