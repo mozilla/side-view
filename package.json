@@ -1,0 +1,26 @@
+{
+  "name": "tab-split-2",
+  "description": "A tab-splitting extension for Firefox",
+  "version": "0.2.0",
+  "author": "Mozilla (https://mozilla.org/)",
+  "bugs": {
+    "url": "https://github.com/mozilla/tab-split-2/issues"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "npm-run-all": "^4.1.2",
+    "web-ext": "^2.4.0"
+  },
+  "homepage": "https://github.com/mozilla/tab-split-2/",
+  "license": "MPL-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mozilla/tab-split-2.git"
+  },
+  "scripts": {
+    "start": "npm-run-all build run",
+    "build": "mkdir -p ./Profile && web-ext build --source-dir=addon --overwrite-dest",
+    "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
+    "run": "web-ext run --source-dir=addon -p ./Profile --browser-console -f nightly"
+  }
+}
