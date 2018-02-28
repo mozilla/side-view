@@ -39,7 +39,7 @@ function displayHome() {
         displayPage(event.target.href);
         event.preventDefault();
         return false;
-      })
+      });
       anchor.prepend(image);
       li.appendChild(anchor);
       tabList.appendChild(li);
