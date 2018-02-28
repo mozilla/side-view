@@ -1,0 +1,31 @@
+version: 2.0
+notify:
+  branches:
+    only:
+      - master
+jobs:
+  package:
+    docker:
+      - image: circleci/node:8.9.4
+    steps:
+      - checkout
+      - restore_cache:
+        key: node-modules-
+      - run:
+        - npm install
+        - npm run package
+      - save_cache:
+        key: node-modules-
+        paths:
+          - node_modules
+      - store_artifacts:
+        path: addon.xpi
+      - persist_to_workspace:
+        root: .
+        paths:
+          - ./*
+workflows:
+  version: 2
+  package:
+    jobs:
+      - package
