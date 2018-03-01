@@ -14,6 +14,9 @@ jobs:
             - run:
                 name: package
                 command: npm run package
+            - run:
+                name: test
+                command: npm test
             - save_cache:
                 key: node-modules-
                 paths:
