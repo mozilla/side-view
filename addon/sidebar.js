@@ -60,11 +60,11 @@ async function init() {
   const thisWindowId = windowInfo.id;
 
   browser.runtime.onMessage.addListener((message) => {
-    if (message.windowId && thisWindowId && message.windowId != thisWindowId) {
+    if (message.windowId && thisWindowId && message.windowId !== thisWindowId) {
       // Not intended for this window
       return;
     }
-    if (message.type == "browse") {
+    if (message.type === "browse") {
       displayPage(message.url, message.desktop);
     } else {
       console.error("Got unexpected message:", message);
@@ -75,4 +75,3 @@ async function init() {
 }
 
 init();
-

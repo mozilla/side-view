@@ -63,9 +63,9 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
 });
 
 browser.runtime.onMessage.addListener((message) => {
-  if (message.type == "setDesktop") {
+  if (message.type === "setDesktop") {
     setDesktop(message.desktop, message.url);
-  } else if (message.type == "sendEvent") {
+  } else if (message.type === "sendEvent") {
     ga.sendEvent(message.ec, message.ea, message.eventParams);
   } else {
     console.error("Unexpected message to background:", message);

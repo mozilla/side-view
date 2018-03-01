@@ -14,8 +14,9 @@ module.exports = {
   "plugins": [
     "mozilla"
   ],
+  "root": true,
   "rules": {
-    "eqeqeq": "warn",
+    "eqeqeq": "error",
     "no-console": "warn",
     "space-before-function-paren": "off"
   }
