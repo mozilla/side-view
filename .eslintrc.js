@@ -15,8 +15,8 @@ module.exports = {
     "mozilla"
   ],
   "rules": {
-    "no-console": "off", // TODO: warn
+    "eqeqeq": "warn",
+    "no-console": "warn",
     "space-before-function-paren": "off"
   }
 };
-
