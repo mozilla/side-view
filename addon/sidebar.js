@@ -49,16 +49,22 @@ function displayHome() {
   });
 }
 
+function sendEvent(ec, ea, eventParams) {
+  browser.runtime.sendMessage({type: "sendEvent", ec, ea, eventParams});
+}
+
 function element(selector) {
   return document.querySelector(selector);
 }
 
 element("#home").addEventListener("click", () => {
+  sendEvent("goHome", "click");
   displayHome();
 });
 
 element("#desktop").addEventListener("change", (event) => {
   let desktop = event.target.checked;
+  sendEvent("selectDesktop", desktop ? "on" : "off");
   browser.runtime.sendMessage({type: "setDesktop", desktop, url: lastDisplayedUrl}).then(() => {
     displayPage(lastDisplayedUrl, desktop);
   }).catch((error) => {
