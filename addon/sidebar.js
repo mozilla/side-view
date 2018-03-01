@@ -35,22 +35,24 @@ async function displayHome() {
   }
 }
 
+function sendEvent(ec, ea, eventParams) {
+  browser.runtime.sendMessage({type: "sendEvent", ec, ea, eventParams});
+}
+
 function element(selector) {
   return document.querySelector(selector);
 }
 
 element("#home").addEventListener("click", () => {
+  sendEvent("goHome", "click");
   displayHome();
 });
 
 element("#desktop").addEventListener("change", async (event) => {
   let desktop = event.target.checked;
-  try {
-    await browser.runtime.sendMessage({type: "setDesktop", desktop, url: lastDisplayedUrl});
-    displayPage(lastDisplayedUrl, desktop);
-  } catch (error) {
-    console.error("Error handling desktop request:", error);
-  }
+  await browser.runtime.sendMessage({type: "setDesktop", desktop, url: lastDisplayedUrl});
+  sendEvent("selectDesktop", desktop ? "on" : "off");
+  displayPage(lastDisplayedUrl, desktop);
 });
 
 async function init() {
