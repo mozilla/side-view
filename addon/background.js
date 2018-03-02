@@ -113,12 +113,21 @@ browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
 // Remove X-Frame-Options to allow any page to be embedded in an iframe
 chrome.webRequest.onHeadersReceived.addListener(function (info) {
   let headers = info.responseHeaders;
+  let madeChanges = false;
   for (let i = 0; i < headers.length; i++) {
     let name = headers[i].name.toLowerCase();
     if (name === "x-frame-options" || name === "frame-options") {
       headers.splice(i, 1);
-      return {"responseHeaders": headers};
+      i--;
+      madeChanges = true;
     }
+    if (name === "content-security-policy") {
+      headers[i].value = headers[i].value.replace(/frame-ancestors[^;]*;?/i, "");
+      madeChanges = true;
+    }
+  }
+  if (madeChanges) {
+    return {"responseHeaders": headers};
   }
   return {};
 }, requestFilter, ["blocking", "responseHeaders"]);
@@ -150,4 +159,3 @@ async function init() {
 }
 
 init();
-

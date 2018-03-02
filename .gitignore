@@ -3,3 +3,4 @@ web-ext-artifacts
 addon.xpi
 addon/build
 addon/manifest.json
+.DS_Store
