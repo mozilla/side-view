@@ -14,6 +14,8 @@
     "eslint-plugin-no-unsanitized": "^2.0.2",
     "mustache": "^2.3.0",
     "npm-run-all": "^4.1.2",
+    "stylelint": "^9.1.1",
+    "stylelint-config-standard": "^18.2.0",
     "testpilot-ga": "^0.3.0",
     "web-ext": "^2.4.0"
   },
@@ -29,6 +31,7 @@
     "lint": "npm-run-all lint:*",
     "lint:addon": "npm run package && addons-linter ./addon.xpi -o text",
     "lint:js": "eslint addon",
+    "lint:styles": "stylelint ./addon/*.css",
     "build": "npm-run-all build:*",
     "build:ga": "mkdir -p addon/build && cp $(node -e 'console.log(require.resolve(\"testpilot-ga\"))') addon/build/testpilot-ga.js",
     "build:manifest": "mustache package.json manifest.json.tmpl > addon/manifest.json",
