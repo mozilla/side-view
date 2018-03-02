@@ -18,6 +18,7 @@ module.exports = {
   "rules": {
     "eqeqeq": "error",
     "no-console": "warn",
-    "space-before-function-paren": "off"
+    "space-before-function-paren": "off",
+    "no-console": ["error", {"allow": ["error", "info", "trace", "warn"]}]
   }
 };
