@@ -1,4 +1,5 @@
 node_modules
 web-ext-artifacts
 addon.xpi
-/addon/build
+addon/build
+addon/manifest.json
