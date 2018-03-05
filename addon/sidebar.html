@@ -3,56 +3,45 @@
   <head>
     <meta charset="UTF-8">
     <title>Sidebar</title>
-    <style>
-      body, html {
-        height: 100%;
-        width: 100%;
-      }
-      #onboarding {
-        margin: 1em;
-      }
-      #browser-container {
-        width: 100%;
-        height: 100%;
-      }
-      iframe {
-        width: 100%;
-        height: 100%;
-        border: none;
-      }
-      #iframe-container {
-        height: 100%;
-        width: 100%;
-        padding-bottom: 20px;
-      }
-      #toolbar {
-        width: 100%;
-        position: absolute;
-        bottom: 0px;
-        height: 20px;
-        border-top: 1px solid #000;
-      }
-    </style>
+    <link rel="stylesheet" href="sidebar.css"/>
   </head>
   <body>
-    <div id="onboarding" style="display: none">
-      <p>
-        Use the context (right-click) menu to open pages in this sidebar.
-      </p>
-
-      <ul id="tabs">
-      </ul>
+    <div id="home-container" style="display:none">
+      <a class="feedback-button" href="">
+        <span class="feedback-button__copy">Feedback</span>
+        <div class="feedback-button__icon"></div>
+      </a>
+      <section class="onboarding-section">
+        <p>
+          Use the context (right-click) menu to open pages in this sidebar.
+        </p>
+      </section>
+      <section class="tabs-section" id="open-tabs">
+        <h2 class="tabs-section__title">Current Tabs</h2>
+        <ul id="open-tabs-list" class="tabs-section__list">
+        </ul>
+      </section>
+      <section class="tabs-section" id="recent-tabs">
+        <h2 class="tabs-section__title">Recent Splits</h2>
+        <ul id="recent-tabs-list" class="tabs-section__list">
+          <!--TODO: Populate this section from localstorage,
+            this section should be invisible if !recentTabs || in private browsing -->
+        </ul>
+      </section>
     </div>
-
-    <div id="browser-container" style="display: none">
+    <div id="browser-container">
+      <div class="toolbar">
+        <button id="home" class="toolbar__home" title="home"></button>
+        <span id="browser-domain" class="toolbar__domain"></span>
+        <button id="refresh" class="toolbar__refresh" title="refresh"></button>
+      </div>
       <div id="iframe-container">
         <iframe id="browser-iframe" src="about:blank"></iframe>
       </div>
-      <div id="toolbar">
-        <button id="home">home</button>
-        <span id="browser-domain"></span>
-        <label for="desktop">Desktop? <input type="checkbox" id="desktop"></label>
-      </div>
+      <label class="site-request" for="desktop">
+        <span>Request desktop site</span>
+        <input type="checkbox" id="desktop">
+      </label>
     </div>
 
     <script src="sidebar.js"></script>
