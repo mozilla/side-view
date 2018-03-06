@@ -8,6 +8,7 @@ function displayPage(url, desktop, hasTransition = true ) {
   let urlObj = new URL(url);
   element("#browser-domain").textContent = urlObj.hostname;
   element("#desktop").checked = !!desktop;
+  browser.tabs.onUpdated.removeListener(updateHome);
 }
 
 // helper function for state changes
@@ -43,6 +44,11 @@ function dumpIframeContentsAfter(time) {
 
 async function displayHome(hasTransition = true) {
   slideUI(false, hasTransition);
+  browser.tabs.onUpdated.addListener(updateHome);
+  await updateHome();
+}
+
+async function updateHome() {
   const windowInfo = await browser.windows.getCurrent({populate: true});
   const tabList = element("#open-tabs-list");
   tabList.innerHTML = "";
