@@ -1,5 +1,6 @@
 let lastDisplayedUrl;
 const ANIMATION_TIME = 300;
+const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
 function displayPage(url, desktop, hasTransition = true ) {
   slideUI(true, hasTransition);
@@ -8,6 +9,9 @@ function displayPage(url, desktop, hasTransition = true ) {
   let urlObj = new URL(url);
   element("#browser-domain").textContent = urlObj.hostname;
   element("#desktop").checked = !!desktop;
+  for (let eventName of rerenderEvents) {
+    browser.tabs[eventName].removeListener(updateHome);
+  }
 }
 
 // helper function for state changes
@@ -43,6 +47,19 @@ function dumpIframeContentsAfter(time) {
 
 async function displayHome(hasTransition = true) {
   slideUI(false, hasTransition);
+  for (let eventName of rerenderEvents) {
+    browser.tabs[eventName].addListener(updateHome);
+  }
+  await updateHome();
+}
+
+async function updateHome(event) {
+  if (event) {
+    // If this is called from an event, then often browser.windows.getCurrent() won't
+    // be updated, and will return stale information, so we'll rerender a second time
+    // very soon
+    setTimeout(updateHome, 50);
+  }
   const windowInfo = await browser.windows.getCurrent({populate: true});
   const tabList = element("#open-tabs-list");
   tabList.innerHTML = "";
