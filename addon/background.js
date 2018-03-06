@@ -1,4 +1,4 @@
-/* global TestPilotGA */
+/* global TestPilotGA, buildSettings */
 
 const USER_AGENT = "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0";
 // iOS:
@@ -15,9 +15,10 @@ const ga = new TestPilotGA({
   aid: manifest.applications.gecko.id,
   aiid: "testpilot",
   av: manifest.version,
-  cd19: "dev", // could be: local, dev, stage, or production
+  // cd19 could also be dev or stage:
+  cd19: buildSettings.NODE_ENV === "prod" ? "production" : "local",
   ds: "addon",
-  tid: "", // production value is "UA-77033033-7"
+  tid: buildSettings.NODE_ENV === "prod" ? "UA-77033033-7" : "",
 });
 
 function sendEvent(...args) {
