@@ -51,8 +51,19 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   }
   // FIXME: should send something in the event about whether the sidebar is already open
   // FIXME: should send something in the event about whether tab.id === -1 (probably from the sidebar itself)
-  // let title = info.linkText || tab.title || "Page";
   await browser.sidebarAction.open();
+  await openUrl(url);
+});
+
+browser.browserAction.onClicked.addListener(async () => {
+  await browser.sidebarAction.open();
+  sendEvent("browse", "browserAction");
+  let tabs = await browser.tabs.query({active: true, currentWindow: true});
+  let url = tabs[0].url;
+  await openUrl(url);
+});
+
+async function openUrl(url) {
   // FIXME: should send something in an event about whether the desktop has already been set
   const windowInfo = await browser.windows.getCurrent();
   let desktop = !!desktopHostnames[(new URL(url)).hostname];
@@ -60,7 +71,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   return retry(() => {
     return browser.runtime.sendMessage(message);
   }, {times: 3, wait: 50});
-});
+}
 
 browser.runtime.onMessage.addListener((message) => {
   if (message.type === "setDesktop") {
