@@ -90,6 +90,11 @@ element("#desktop").addEventListener("change", async (event) => {
   displayPage(lastDisplayedUrl, desktop, false);
 });
 
+element("#refresh").addEventListener("click", () => {
+  sendEvent("refresh");
+  element("#browser-iframe").src = lastDisplayedUrl;
+});
+
 async function init() {
   const windowInfo = await browser.windows.getCurrent();
   const thisWindowId = windowInfo.id;
