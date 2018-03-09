@@ -9,6 +9,7 @@ const USER_AGENT = "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefo
 //   Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19
 
 const manifest = browser.runtime.getManifest();
+const sidebarUrls = new Map();
 
 const ga = new TestPilotGA({
   an: "tab-split-2",
@@ -64,11 +65,12 @@ browser.browserAction.onClicked.addListener(async () => {
   await openUrl(url);
 });
 
-async function openUrl(url) {
+async function openUrl(url, inWindowId = null) {
   // FIXME: should send something in an event about whether the desktop has already been set
-  const windowInfo = await browser.windows.getCurrent();
+  const windowInfo = {id: inWindowId} || await browser.windows.getCurrent();
   let desktop = !!desktopHostnames[(new URL(url)).hostname];
   let message = {type: "browse", url, windowId: windowInfo.id, desktop};
+  sidebarUrls.set(windowInfo.id, url);
   return retry(() => {
     return browser.runtime.sendMessage(message);
   }, {times: 3, wait: 50});
@@ -79,6 +81,13 @@ browser.runtime.onMessage.addListener((message) => {
     setDesktop(message.desktop, message.url);
   } else if (message.type === "sendEvent") {
     ga.sendEvent(message.ec, message.ea, message.eventParams);
+  } else if (message.type === "sidebarOpened") {
+    let windowId = message.windowId;
+    if (sidebarUrls.get(windowId)) {
+      openUrl(sidebarUrls.get(windowId), windowId);
+    }
+  } else if (message.type === "sidebarDisplayHome") {
+    sidebarUrls.delete(message.windowId);
   } else {
     console.error("Unexpected message to background:", message);
   }
