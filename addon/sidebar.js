@@ -59,6 +59,7 @@ async function updateHome(event) {
     // be updated, and will return stale information, so we'll rerender a second time
     // very soon
     setTimeout(updateHome, 50);
+    setTimeout(updateHome, 300);
   }
   const windowInfo = await browser.windows.getCurrent({populate: true});
   const tabList = element("#open-tabs-list");
