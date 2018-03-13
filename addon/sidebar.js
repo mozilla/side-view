@@ -41,7 +41,7 @@ function hideViewAfter(element, time) {
 // clear it after css animates it out.
 function dumpIframeContentsAfter(time) {
   setTimeout(() => {
-    element("#browser-iframe").src = "about:blank";
+    element("#browser-iframe").src = "./loading.html";
   }, time);
 }
 
