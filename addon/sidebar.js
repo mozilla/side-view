@@ -3,6 +3,7 @@ const ANIMATION_TIME = 300;
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
 function displayPage(url, desktop, hasTransition = true ) {
+  lastRenderedHomeInfo = null;
   slideUI(true, hasTransition);
   lastDisplayedUrl = url;
   element("#browser-iframe").src = url;
@@ -53,6 +54,10 @@ async function displayHome(hasTransition = true) {
   await updateHome();
 }
 
+// This is used as a key to tell if we need to rerender home, or if what is currently
+// displayed is the same as what would be newly displayed
+let lastRenderedHomeInfo = null;
+
 async function updateHome(event) {
   if (event) {
     // If this is called from an event, then often browser.windows.getCurrent() won't
@@ -63,7 +68,8 @@ async function updateHome(event) {
   }
   const windowInfo = await browser.windows.getCurrent({populate: true});
   const tabList = element("#open-tabs-list");
-  tabList.innerHTML = "";
+  const newTabList = tabList.cloneNode();
+  let thisRenderedHomeInfo = "";
   for (let tab of windowInfo.tabs) {
     if (!tab.url.startsWith("http")) continue;
     let li = document.createElement("li");
@@ -71,11 +77,18 @@ async function updateHome(event) {
     let text = document.createElement("span");
     image.classList.add("tab__image");
     text.classList.add("tab__text");
-    image.style.backgroundImage = `url(${tab.favIconUrl})`;
+    let favIconUrl = null;
+    if ("favIconUrl" in tab && tab.favIconUrl) {
+      favIconUrl = tab.favIconUrl;
+      image.style.backgroundImage = `url(${favIconUrl})`;
+    }
+    thisRenderedHomeInfo += favIconUrl + " ";
     let anchor = document.createElement("a");
     anchor.href = tab.url;
+    thisRenderedHomeInfo += tab.url + " ";
     anchor.classList.add("tab");
     text.textContent = tab.title;
+    thisRenderedHomeInfo += tab.title + "\n";
     anchor.addEventListener("click", (event) => {
       displayPage(event.target.href);
       event.preventDefault();
@@ -84,7 +97,11 @@ async function updateHome(event) {
     anchor.prepend(image);
     anchor.appendChild(text);
     li.appendChild(anchor);
-    tabList.appendChild(li);
+    newTabList.appendChild(li);
+  }
+  if (thisRenderedHomeInfo !== lastRenderedHomeInfo) {
+    tabList.replaceWith(newTabList);
+    lastRenderedHomeInfo = thisRenderedHomeInfo;
   }
 }
 
