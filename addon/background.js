@@ -30,7 +30,7 @@ sendEvent("startup", "startup", {ni: true});
 browser.contextMenus.create({
   id: "open-in-sidebar",
   title: "Open in sidebar",
-  contexts: ["page", "tab"],
+  contexts: ["page", "tab", "bookmark"],
   documentUrlPatterns: ["<all_urls>"]
 });
 
@@ -43,16 +43,21 @@ browser.contextMenus.create({
 });
 
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
-  let url = info.linkUrl || tab.url;
+  let url;
+  await browser.sidebarAction.open();
   if (info.linkUrl) {
     sendEvent("browse", "context-menu-link");
+    url = info.linkUrl;
+  } else if (info.bookmarkId) {
+    let bookmarkInfo = await browser.bookmarks.get(info.bookmarkId);
+    url = bookmarkInfo[0].url;
   } else {
     // FIXME: should distinguish between clicking in the page, and on the tab:
     sendEvent("browse", "context-menu-page");
+    url = tab.url;
   }
   // FIXME: should send something in the event about whether the sidebar is already open
   // FIXME: should send something in the event about whether tab.id === -1 (probably from the sidebar itself)
-  await browser.sidebarAction.open();
   await openUrl(url);
 });
 
