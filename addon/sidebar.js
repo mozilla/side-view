@@ -77,6 +77,11 @@ async function updateHome(event) {
     anchor.classList.add("tab");
     text.textContent = tab.title;
     anchor.addEventListener("click", (event) => {
+      browser.runtime.sendMessage({
+        type: "sidebarOpenedPage",
+        windowId: windowInfo.id,
+        url: event.target.href
+      });
       displayPage(event.target.href);
       event.preventDefault();
       return false;

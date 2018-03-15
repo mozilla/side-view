@@ -65,12 +65,14 @@ browser.browserAction.onClicked.addListener(async () => {
   await openUrl(url);
 });
 
-async function openUrl(url, inWindowId = null) {
+async function openUrl(url, windowId = null) {
   // FIXME: should send something in an event about whether the desktop has already been set
-  const windowInfo = {id: inWindowId} || await browser.windows.getCurrent();
+  if (!windowId) {
+    windowId = (await browser.windows.getCurrent()).id;
+  }
   let desktop = !!desktopHostnames[(new URL(url)).hostname];
-  let message = {type: "browse", url, windowId: windowInfo.id, desktop};
-  sidebarUrls.set(windowInfo.id, url);
+  let message = {type: "browse", url, windowId, desktop};
+  sidebarUrls.set(windowId, url);
   return retry(() => {
     return browser.runtime.sendMessage(message);
   }, {times: 3, wait: 50});
@@ -86,6 +88,8 @@ browser.runtime.onMessage.addListener((message) => {
     if (sidebarUrls.get(windowId)) {
       openUrl(sidebarUrls.get(windowId), windowId);
     }
+  } else if (message.type === "sidebarOpenedPage") {
+    sidebarUrls.set(message.windowId, message.url);
   } else if (message.type === "sidebarDisplayHome") {
     sidebarUrls.delete(message.windowId);
   } else {
