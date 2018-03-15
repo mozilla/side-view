@@ -193,6 +193,7 @@ supply a favicon */
   white-space: nowrap;
   width: 28px;
   box-shadow: 0 0 50px 20px var(--grey-10);
+  z-index: 1;
 }
 
 .feedback-button:hover {
