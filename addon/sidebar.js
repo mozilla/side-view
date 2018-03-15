@@ -1,4 +1,5 @@
 let lastDisplayedUrl;
+let thisWindowId;
 const ANIMATION_TIME = 300;
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
@@ -90,6 +91,11 @@ async function updateHome(event) {
     text.textContent = tab.title;
     thisRenderedHomeInfo += tab.title + "\n";
     anchor.addEventListener("click", (event) => {
+      browser.runtime.sendMessage({
+        type: "sidebarOpenedPage",
+        windowId: windowInfo.id,
+        url: event.target.href
+      });
       displayPage(event.target.href);
       event.preventDefault();
       return false;
@@ -115,6 +121,7 @@ function element(selector) {
 
 element("#home").addEventListener("click", () => {
   sendEvent("goHome", "click");
+  browser.runtime.sendMessage({type: "sidebarDisplayHome", windowId: thisWindowId});
   displayHome();
 });
 
@@ -132,7 +139,7 @@ element("#refresh").addEventListener("click", () => {
 
 async function init() {
   const windowInfo = await browser.windows.getCurrent();
-  const thisWindowId = windowInfo.id;
+  thisWindowId = windowInfo.id;
 
   browser.runtime.onMessage.addListener((message) => {
 
@@ -146,6 +153,8 @@ async function init() {
       console.error("Got unexpected message:", message);
     }
   });
+
+  browser.runtime.sendMessage({type: "sidebarOpened", windowId: thisWindowId});
 
   displayHome(false);
 }
