@@ -1,6 +1,8 @@
 /* global TestPilotGA, buildSettings */
 
-const USER_AGENT = "Mozilla/5.0 (Android 4.4; Mobile; rv:41.0) Gecko/41.0 Firefox/41.0";
+const FIREFOX_VERSION = /rv:([0-9.]+)/.exec(navigator.userAgent)[1];
+
+const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gecko/${FIREFOX_VERSION} Firefox/${FIREFOX_VERSION}`;
 // iOS:
 //   Mozilla/5.0 (iPhone; CPU iPhone OS 9_2 like Mac OS X) AppleWebKit/601.1 (KHTML, like Gecko) CriOS/47.0.2526.70 Mobile/13C71 Safari/601.1.46
 // Firefox for Android:
