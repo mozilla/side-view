@@ -42,9 +42,13 @@ function hideViewAfter(element, time) {
 // so that iframe doesn't flash on next load,
 // clear it after css animates it out.
 function dumpIframeContentsAfter(time) {
-  setTimeout(() => {
+  if (!time) {
     element("#browser-iframe").src = "./loading.html";
-  }, time);
+  } else {
+    setTimeout(() => {
+      element("#browser-iframe").src = "./loading.html";
+    }, time);
+  }
 }
 
 async function displayHome(hasTransition = true) {
@@ -142,7 +146,6 @@ async function init() {
   thisWindowId = windowInfo.id;
 
   browser.runtime.onMessage.addListener((message) => {
-
     if (message.windowId && thisWindowId && message.windowId !== thisWindowId) {
       // Not intended for this window
       return;
