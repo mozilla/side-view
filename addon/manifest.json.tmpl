@@ -11,6 +11,16 @@
         "strict_min_version": "57.0a1"
       }
     },
+    "experiment_apis": {
+      "tabsplit": {
+        "schema": "../experiment/schema.json",
+        "parent": {
+          "scopes": ["addon_parent"],
+          "script": "../experiment/api.js",
+          "paths": [["tabsplit"]]
+        }
+      }
+    },
     "background": {
       "scripts": [
         "build/buildSettings.js",

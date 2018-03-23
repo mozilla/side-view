@@ -1,0 +1,15 @@
+[
+  {
+    "namespace": "tabsplit",
+    "description": "Tab Split",
+    "functions": [
+      {
+        "name": "init",
+        "type": "function",
+        "description": "Sets up tabsplit.",
+        "async": true,
+        "parameters": []
+      }
+    ]
+  }
+]

@@ -160,6 +160,9 @@ async function init() {
   browser.runtime.sendMessage({type: "sidebarOpened", windowId: thisWindowId});
 
   displayHome(false);
+
+  const message = await browser.tabsplit.init();
+  console.log(`sidebar init sez: "${message}"`);
 }
 
 init();
