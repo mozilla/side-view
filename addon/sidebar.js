@@ -161,7 +161,7 @@ async function init() {
 
   displayHome(false);
 
-  const message = await browser.tabsplit.init();
+  await browser.tabsplit.init();
 }
 
 init();
