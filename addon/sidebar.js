@@ -162,7 +162,6 @@ async function init() {
   displayHome(false);
 
   const message = await browser.tabsplit.init();
-  console.log(`sidebar init sez: "${message}"`);
 }
 
 init();
