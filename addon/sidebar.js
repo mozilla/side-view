@@ -161,7 +161,7 @@ async function init() {
 
   displayHome(false);
 
-  await browser.tabsplit.init();
+  await browser.tabsplit.increaseSidebarMaxWidth();
 }
 
 init();

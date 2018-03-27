@@ -1,12 +1,12 @@
 [
   {
     "namespace": "tabsplit",
-    "description": "Tab Split",
+    "description": "Tab Split Webextension API Experiment Helper",
     "functions": [
       {
-        "name": "init",
+        "name": "increaseSidebarMaxWidth",
         "type": "function",
-        "description": "Sets up tabsplit.",
+        "description": "Changes the maximum width of the sidebar so Tab Split webpages can take up more of the screen.",
         "async": true,
         "parameters": []
       }
