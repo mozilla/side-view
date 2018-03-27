@@ -36,7 +36,14 @@
         <button id="refresh" class="toolbar__refresh" title="Refresh"></button>
       </div>
       <div id="iframe-container">
-        <iframe id="browser-iframe" src="about:blank" sandbox></iframe>
+        <!-- Permissions which are not granted:
+          allow-popups
+          allow-popups-to-escape-sandbox
+          allow-same-origin
+          allow-top-navigation
+          allow-top-navigation-by-user-activation
+        -->
+        <iframe id="browser-iframe" src="about:blank" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts"></iframe>
       </div>
       <label class="site-request" for="desktop">
         <span>Request desktop site</span>
