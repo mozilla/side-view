@@ -3,11 +3,11 @@
      xmlns:em="http://www.mozilla.org/2004/em-rdf#">
 
   <Description about="urn:mozilla:install-manifest"
-               em:id="tabsplit@experiments.addons.mozilla.org"
-               em:name="Tab Split Experiment API"
+               em:id="sideview@experiments.addons.mozilla.org"
+               em:name="Side View WebExtension Experiment API Helper"
                em:type="256"
                em:version="0.2"
-               em:description="tab split api"
+               em:description="Side View WebExtension Experiment API Helper"
                em:creator="Mozilla">
     
     <em:targetApplication>

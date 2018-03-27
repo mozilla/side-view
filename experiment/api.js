@@ -2,10 +2,10 @@
 const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
 
 
-this.tabsplit = class API extends ExtensionAPI {
+this.sideview = class API extends ExtensionAPI {
   getAPI(context) {
     return {
-      tabsplit: {
+      sideview: {
         increaseSidebarMaxWidth: async () => {
           const WindowMediator = Cc['@mozilla.org/appshell/window-mediator;1']
       		  .getService(Ci.nsIWindowMediator);

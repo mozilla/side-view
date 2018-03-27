@@ -1,4 +1,4 @@
-# Tab Split 2
+# Side View
 
 An experiment with opening mobile views of pages in the sidebar
 

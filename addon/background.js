@@ -14,7 +14,7 @@ const manifest = browser.runtime.getManifest();
 const sidebarUrls = new Map();
 
 const ga = new TestPilotGA({
-  an: "tab-split-2",
+  an: "side-view",
   aid: manifest.applications.gecko.id,
   aiid: "testpilot",
   av: manifest.version,
