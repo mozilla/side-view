@@ -160,6 +160,8 @@ async function init() {
   browser.runtime.sendMessage({type: "sidebarOpened", windowId: thisWindowId});
 
   displayHome(false);
+
+  await browser.tabsplit.increaseSidebarMaxWidth();
 }
 
 init();
