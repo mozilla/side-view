@@ -1,14 +1,14 @@
 
-# Tab Split Metrics
+# Side View Metrics
 
-Metrics collections and analysis plan for Tab Split as part of the [Firefox Test Pilot program](https://testpilot.firefox.com).
+Metrics collections and analysis plan for Side View as part of the [Firefox Test Pilot program](https://testpilot.firefox.com).
 
 ## Analysis
 
 Data collected in this experiment will be used to answer the following high-level questions:
 
 * How often do users load a non-homepage in the sidebar?
-* Are people who use Tab Split heavy tab users?
+* Are people who use Side View heavy tab users?
 
 
 
@@ -94,7 +94,7 @@ cd4,
 cd5
 ```
 
-##### When the user activates the Tab Split back button
+##### When the user activates the Side View back button
 ```
 ec: interface,
 ea: button-click,
@@ -102,7 +102,7 @@ el: button-back,
 cd1
 ```
 
-##### When the user activates the Tab Split refresh button
+##### When the user activates the Side View refresh button
 ```
 ec: interface,
 ea: button-click,
@@ -111,7 +111,7 @@ cd1,
 cd3
 ```
 
-##### When the user activates Tab Split from a keyboard shortcut
+##### When the user activates Side View from a keyboard shortcut
 ```
 ec: interface,
 ea: button-click,

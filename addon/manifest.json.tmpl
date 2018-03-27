@@ -1,23 +1,23 @@
 {
     "manifest_version": 2,
-    "name": "Tab Split 2",
+    "name": "Side View",
     "version": "{{version}}",
     "description": "{{description}}",
     "author": "{{{author}}}",
     "homepage_url": "{{{homepage}}}",
     "applications": {
       "gecko": {
-        "id": "tab-split-2@mozilla.org",
+        "id": "side-view@mozilla.org",
         "strict_min_version": "57.0a1"
       }
     },
     "experiment_apis": {
-      "tabsplit": {
+      "sideview": {
         "schema": "../experiment/schema.json",
         "parent": {
           "scopes": ["addon_parent"],
           "script": "../experiment/api.js",
-          "paths": [["tabsplit"]]
+          "paths": [["sideview"]]
         }
       }
     },
@@ -29,11 +29,11 @@
       ]
     },
     "browser_action": {
-      "default_icon": "tabsplit-fox.png",
+      "default_icon": "sideview-fox.png",
       "default_title": "Open current tab in sidebar"
     },
     "sidebar_action": {
-      "default_title": "Tab Split",
+      "default_title": "Side View",
       "default_panel": "sidebar.html"
     },
     "web_accessible_resources": [
