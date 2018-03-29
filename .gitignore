@@ -4,3 +4,4 @@ addon.xpi
 addon/build
 addon/manifest.json
 .DS_Store
+/Profile

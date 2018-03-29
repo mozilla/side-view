@@ -38,7 +38,7 @@
     "build:buildSettings": "node -e 'console.log(JSON.stringify(process.env))' | mustache - addon/buildSettings.js.tmpl > addon/build/buildSettings.js",
     "build:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl' && zip -r web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` experiment",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
-    "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console -f nightly",
+    "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console --keep-profile-changes -f nightly",
     "test": "npm run lint"
   }
 }
