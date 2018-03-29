@@ -177,7 +177,7 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
   let madeChanges = false;
   for (let i = 0; i < headers.length; i++) {
     let name = headers[i].name.toLowerCase();
-    if (name === "x-frame-options" || name === "frame-options") {
+    if (name === "x-frame-options" || name === "frame-options" || name === "www-authenticate") {
       headers.splice(i, 1);
       i--;
       madeChanges = true;
