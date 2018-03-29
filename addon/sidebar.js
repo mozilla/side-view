@@ -1,10 +1,11 @@
 let lastDisplayedUrl;
 let thisWindowId;
+let recentTabs = [];
 const ANIMATION_TIME = 300;
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
 function displayPage(url, desktop, hasTransition = true ) {
-  lastRenderedHomeInfo = null;
+  renderTabListLastRendered = {};
   slideUI(true, hasTransition);
   lastDisplayedUrl = url;
   element("#browser-iframe").src = url;
@@ -61,10 +62,6 @@ async function displayHome(hasTransition = true) {
   await updateHome();
 }
 
-// This is used as a key to tell if we need to rerender home, or if what is currently
-// displayed is the same as what would be newly displayed
-let lastRenderedHomeInfo = null;
-
 async function updateHome(event) {
   if (event) {
     // If this is called from an event, then often browser.windows.getCurrent() won't
@@ -74,35 +71,46 @@ async function updateHome(event) {
     setTimeout(updateHome, 300);
   }
   const windowInfo = await browser.windows.getCurrent({populate: true});
-  const tabList = element("#open-tabs-list");
+  let tabs = windowInfo.tabs.filter(tab => tab.url.startsWith("http"));
+  renderTabList(tabs, "#open-tabs-list");
+  renderTabList(recentTabs, "#recent-tabs-list");
+}
+
+let renderTabListLastRendered = {};
+
+function renderTabList(tabs, containerSelector) {
+  let renderedInfo = "";
+  const tabList = element(containerSelector);
   const newTabList = tabList.cloneNode();
-  let thisRenderedHomeInfo = "";
-  for (let tab of windowInfo.tabs) {
-    if (!tab.url.startsWith("http")) continue;
+  tabs.forEach((tab) => {
     let li = document.createElement("li");
     let image = document.createElement("span");
     let text = document.createElement("span");
     image.classList.add("tab__image");
     text.classList.add("tab__text");
+    let title = tab.title;
+    let url = tab.url;
     let favIconUrl = null;
     if ("favIconUrl" in tab && tab.favIconUrl) {
       favIconUrl = tab.favIconUrl;
       image.style.backgroundImage = `url(${favIconUrl})`;
     }
-    thisRenderedHomeInfo += favIconUrl + " ";
+    renderedInfo += favIconUrl + " ";
     let anchor = document.createElement("a");
-    anchor.href = tab.url;
-    thisRenderedHomeInfo += tab.url + " ";
+    anchor.href = url;
+    renderedInfo += url + " ";
     anchor.classList.add("tab");
-    text.textContent = tab.title;
-    thisRenderedHomeInfo += tab.title + "\n";
+    text.textContent = title;
+    renderedInfo += title + "\n";
     anchor.addEventListener("click", (event) => {
       browser.runtime.sendMessage({
         type: "sidebarOpenedPage",
-        windowId: windowInfo.id,
-        url: event.target.href
+        windowId: thisWindowId,
+        url,
+        favIconUrl,
+        title
       });
-      displayPage(event.target.href);
+      displayPage(url);
       event.preventDefault();
       return false;
     });
@@ -110,10 +118,10 @@ async function updateHome(event) {
     anchor.appendChild(text);
     li.appendChild(anchor);
     newTabList.appendChild(li);
-  }
-  if (thisRenderedHomeInfo !== lastRenderedHomeInfo) {
+  });
+  if (renderedInfo !== renderTabListLastRendered[containerSelector]) {
     tabList.replaceWith(newTabList);
-    lastRenderedHomeInfo = thisRenderedHomeInfo;
+    renderTabListLastRendered[containerSelector] = renderedInfo;
   }
 }
 
@@ -154,6 +162,9 @@ async function init() {
     }
     if (message.type === "browse") {
       displayPage(message.url, message.desktop, false);
+    } else if (message.type === "updateRecentTabs") {
+      recentTabs = message.recentTabs;
+      updateHome();
     } else {
       console.error("Got unexpected message:", message);
     }
@@ -161,9 +172,12 @@ async function init() {
 
   browser.runtime.sendMessage({type: "sidebarOpened", windowId: thisWindowId});
 
-  displayHome(false);
+  recentTabs = await browser.runtime.sendMessage({
+    type: "getRecentTabs"
+  });
 
   await browser.sideview.increaseSidebarMaxWidth();
+  displayHome(false);
 }
 
 init();

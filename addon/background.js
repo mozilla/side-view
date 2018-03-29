@@ -10,6 +10,7 @@ const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gec
 // Chrome for Android:
 //   Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19
 
+const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
 const sidebarUrls = new Map();
 
@@ -47,6 +48,8 @@ browser.contextMenus.create({
 
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
   let url;
+  let favIconUrl;
+  let title;
   await browser.sidebarAction.open();
   if (info.linkUrl) {
     sendEvent("browse", "context-menu-link");
@@ -58,6 +61,12 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
     // FIXME: should distinguish between clicking in the page, and on the tab:
     sendEvent("browse", "context-menu-page");
     url = tab.url;
+    title = tab.title;
+    favIconUrl = tab.favIconUrl;
+  }
+  if (title) {
+    // In cases when we can't get a good title and favicon, we just don't bother saving it as a recent tab
+    addRecentTab({url, favIconUrl, title});
   }
   // FIXME: should send something in the event about whether the sidebar is already open
   // FIXME: should send something in the event about whether tab.id === -1 (probably from the sidebar itself)
@@ -69,6 +78,7 @@ browser.browserAction.onClicked.addListener(async () => {
   sendEvent("browse", "browserAction");
   let tabs = await browser.tabs.query({active: true, currentWindow: true});
   let url = tabs[0].url;
+  addRecentTab({url, favIconUrl: tabs[0].favIconUrl, title: tabs[0].title});
   await openUrl(url);
 });
 
@@ -85,6 +95,8 @@ async function openUrl(url, windowId = null) {
   }, {times: 3, wait: 50});
 }
 
+/* eslint-disable consistent-return */
+// Because this dispatches to different kinds of functions, its return behavior is inconsistent
 browser.runtime.onMessage.addListener((message) => {
   if (message.type === "setDesktop") {
     setDesktop(message.desktop, message.url);
@@ -97,12 +109,16 @@ browser.runtime.onMessage.addListener((message) => {
     }
   } else if (message.type === "sidebarOpenedPage") {
     sidebarUrls.set(message.windowId, message.url);
+    addRecentTab(message);
   } else if (message.type === "sidebarDisplayHome") {
     sidebarUrls.delete(message.windowId);
+  } else if (message.type === "getRecentTabs") {
+    return Promise.resolve(recentTabs);
   } else {
     console.error("Unexpected message to background:", message);
   }
 });
+/* eslint-enable consistent-return */
 
 // This is a RequestFilter: https://developer.mozilla.org/en-US/Add-ons/WebExtensions/API/webRequest/RequestFilter
 // It matches tabs that aren't attached to a normal location (like a sidebar)
@@ -123,6 +139,19 @@ async function setDesktop(desktop, url) {
     delete desktopHostnames[hostname];
   }
   await browser.storage.sync.set({desktopHostnames});
+}
+
+let recentTabs = [];
+
+async function addRecentTab(tabInfo) {
+  recentTabs = recentTabs.filter((item) => item.url !== tabInfo.url);
+  recentTabs.unshift(tabInfo);
+  recentTabs.splice(MAX_RECENT_TABS);
+  await browser.runtime.sendMessage({
+    type: "updateRecentTabs",
+    recentTabs
+  });
+  await browser.storage.sync.set({recentTabs});
 }
 
 // Add a mobile header to outgoing requests
@@ -186,8 +215,9 @@ function timeout(time) {
 }
 
 async function init() {
-  const result = await browser.storage.sync.get("desktopHostnames");
+  const result = await browser.storage.sync.get(["desktopHostnames", "recentTabs"]);
   desktopHostnames = result.desktopHostnames || {};
+  recentTabs = result.recentTabs || [];
 }
 
 init();
