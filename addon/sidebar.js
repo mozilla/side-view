@@ -22,6 +22,7 @@ function slideUI(showBrowser, hasTransition) {
   const homeContainer = element("#home-container");
   const time = hasTransition ? ANIMATION_TIME : 0;
   if (showBrowser) {
+    browserContainer.style.display = "block";
     browserContainer.style.transitionDuration = `${time}ms`;
     browserContainer.style.transform = "translate3D(0, 0, 0)";
     hideViewAfter(homeContainer, time);
@@ -29,6 +30,7 @@ function slideUI(showBrowser, hasTransition) {
     browserContainer.style.transform = "translate3D(100%, 0, 0)";
     homeContainer.style.display = "block";
     dumpIframeContentsAfter(time);
+    hideViewAfter(browserContainer, time);
   }
 }
 
