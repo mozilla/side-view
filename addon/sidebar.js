@@ -15,6 +15,12 @@ function displayPage(url, desktop, hasTransition = true ) {
   for (let eventName of rerenderEvents) {
     browser.tabs[eventName].removeListener(updateHome);
   }
+  sendEvent({
+    ec: "content",
+    ea: "load-url",
+    el: "child-page",
+    forUrl: url,
+  });
 }
 
 // helper function for state changes
@@ -60,6 +66,11 @@ async function displayHome(hasTransition = true) {
     browser.tabs[eventName].addListener(updateHome);
   }
   await updateHome();
+  sendEvent({
+    ec: "content",
+    ea: "load-url",
+    el: "home-page",
+  });
 }
 
 async function updateHome(event) {
@@ -72,17 +83,17 @@ async function updateHome(event) {
   }
   const windowInfo = await browser.windows.getCurrent({populate: true});
   let tabs = windowInfo.tabs.filter(tab => tab.url.startsWith("http"));
-  renderTabList(tabs, "#open-tabs-list");
-  renderTabList(recentTabs, "#recent-tabs-list");
+  renderTabList(tabs, "#open-tabs-list", "existing-tab");
+  renderTabList(recentTabs, "#recent-tabs-list", "recent-tab");
 }
 
 let renderTabListLastRendered = {};
 
-function renderTabList(tabs, containerSelector) {
+function renderTabList(tabs, containerSelector, eventLabel) {
   let renderedInfo = "";
   const tabList = element(containerSelector);
   const newTabList = tabList.cloneNode();
-  tabs.forEach((tab) => {
+  tabs.forEach((tab, index) => {
     let li = document.createElement("li");
     let image = document.createElement("span");
     let text = document.createElement("span");
@@ -110,6 +121,14 @@ function renderTabList(tabs, containerSelector) {
         favIconUrl,
         title
       });
+      sendEvent({
+        ec: "interface",
+        ea: "load-url",
+        el: eventLabel,
+        forUrl: url,
+        cd4: tabs.length,
+        cd5: index
+      });
       displayPage(url);
       event.preventDefault();
       return false;
@@ -125,8 +144,10 @@ function renderTabList(tabs, containerSelector) {
   }
 }
 
-function sendEvent(ec, ea, eventParams) {
-  browser.runtime.sendMessage({type: "sendEvent", ec, ea, eventParams});
+function sendEvent(args) {
+  args.cd1 = window.innerWidth;
+  args.type = "sendEvent";
+  browser.runtime.sendMessage(args);
 }
 
 function element(selector) {
@@ -134,21 +155,43 @@ function element(selector) {
 }
 
 element("#home").addEventListener("click", () => {
-  sendEvent("goHome", "click");
   browser.runtime.sendMessage({type: "sidebarDisplayHome", windowId: thisWindowId});
+  sendEvent({
+    ec: "interface",
+    ea: "button-click",
+    el: "button-back",
+  });
   displayHome();
 });
 
 element("#desktop").addEventListener("change", async (event) => {
   let desktop = event.target.checked;
   await browser.runtime.sendMessage({type: "setDesktop", desktop, url: lastDisplayedUrl});
-  sendEvent("selectDesktop", desktop ? "on" : "off");
+  sendEvent({
+    ec: "interface",
+    ea: "button-click",
+    el: desktop ? "request-desktop" : "request-mobile",
+  });
   displayPage(lastDisplayedUrl, desktop, false);
 });
 
 element("#refresh").addEventListener("click", () => {
-  sendEvent("refresh");
+  sendEvent({
+    ec: "interface",
+    ea: "button-click",
+    el: "button-refresh",
+    forUrl: lastDisplayedUrl,
+  });
   element("#browser-iframe").src = lastDisplayedUrl;
+});
+
+element(".feedback-button").addEventListener("click", () => {
+  sendEvent({
+    ec: "interface",
+    ea: "button-click",
+    el: "feedback",
+    forUrl: lastDisplayedUrl,
+  });
 });
 
 async function init() {
@@ -165,6 +208,8 @@ async function init() {
     } else if (message.type === "updateRecentTabs") {
       recentTabs = message.recentTabs;
       updateHome();
+    } else if (["setDesktop", "sendEvent", "sidebarOpened", "sidebarOpenedPage", "sidebarDisplayedHome", "getRecentTabs"].includes(message.type)) {
+      // These intended to go to the backgrond and can be ignored here
     } else {
       console.error("Got unexpected message:", message);
     }
