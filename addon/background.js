@@ -157,7 +157,9 @@ async function addRecentTab(tabInfo) {
 // Add a mobile header to outgoing requests
 browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
   let hostname = (new URL(info.url)).hostname;
-  if (desktopHostnames[hostname]) {
+  // Note, if info.parentFrameId is not zero, then this request is for a sub-sub-iframe, i.e.,
+  // an iframe embedded in another iframe, and not the top-level iframe we want to rewrite
+  if (info.parentFrameId || desktopHostnames[hostname]) {
     return {};
   }
   let headers = info.requestHeaders;
@@ -173,6 +175,11 @@ browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
 
 // Remove X-Frame-Options to allow any page to be embedded in an iframe
 chrome.webRequest.onHeadersReceived.addListener(function (info) {
+  // Note, if info.parentFrameId is not zero, then this request is for a sub-sub-iframe, i.e.,
+  // an iframe embedded in another iframe, and not the top-level iframe we want to rewrite
+  if (info.parentFrameId) {
+    return {};
+  }
   let headers = info.responseHeaders;
   let madeChanges = false;
   for (let i = 0; i < headers.length; i++) {
