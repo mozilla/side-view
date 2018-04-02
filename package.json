@@ -34,7 +34,7 @@
     "lint:styles": "stylelint ./addon/*.css",
     "build": "npm-run-all build:*",
     "build:ga": "mkdir -p addon/build && cp $(node -e 'console.log(require.resolve(\"testpilot-ga\"))') addon/build/testpilot-ga.js",
-    "build:manifest": "node -e 'let input = JSON.parse(fs.readFileSync(\"package.json\")); input[\"timestamp\"] = Date.now(); console.log(JSON.stringify(input))' | mustache - addon/manifest.json.tmpl > addon/manifest.json",
+    "build:manifest": "mustache package.json addon/manifest.json.tmpl > addon/manifest.json",
     "build:buildSettings": "node -e 'console.log(JSON.stringify(process.env))' | mustache - addon/buildSettings.js.tmpl > addon/build/buildSettings.js",
     "build:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl' && zip -r web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` experiment",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
