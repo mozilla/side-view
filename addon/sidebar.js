@@ -170,14 +170,16 @@ async function init() {
     }
   });
 
+  displayHome(false);
+
   browser.runtime.sendMessage({type: "sidebarOpened", windowId: thisWindowId});
 
   recentTabs = await browser.runtime.sendMessage({
     type: "getRecentTabs"
   });
+  updateHome();
 
   await browser.sideview.increaseSidebarMaxWidth();
-  displayHome(false);
 }
 
 init();
