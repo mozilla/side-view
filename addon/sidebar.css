@@ -185,7 +185,7 @@ supply a favicon */
   justify-content: flex-end;
   overflow: hidden;
   padding: 0 5px 0 7px;
-  position: absolute;
+  position: fixed;
   right: 20px;
   text-decoration: none;
   bottom: 20px;
