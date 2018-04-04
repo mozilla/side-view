@@ -25,11 +25,35 @@ const ga = new TestPilotGA({
   tid: buildSettings.NODE_ENV === "prod" ? "UA-77033033-7" : "",
 });
 
-function sendEvent(...args) {
-  ga.sendEvent(...args);
+async function sendEvent(args) {
+  if (args.forUrl) {
+    let hostname = (new URL(args.forUrl)).hostname;
+    delete args.forUrl;
+    args.cd3 = desktopHostnames[hostname] ? "desktop" : "mobile";
+  }
+  args.cd2 = await countTabs();
+  ga.sendEvent(args.ec, args.ea, args);
 }
 
-sendEvent("startup", "startup", {ni: true});
+let lastCountTabs;
+let lastCountTabsTime = 0;
+const COUNT_TABS_CACHE_TIME = 1000;
+
+async function countTabs() {
+  if (Date.now() - lastCountTabsTime < COUNT_TABS_CACHE_TIME) {
+    return lastCountTabs;
+  }
+  let tabs = await browser.tabs.query({});
+  lastCountTabs = tabs.length;
+  lastCountTabsTime = Date.now();
+  return lastCountTabs;
+}
+
+sendEvent({
+  ec: "startup",
+  ea: "startup",
+  ni: true
+});
 
 browser.contextMenus.create({
   id: "open-in-sidebar",
@@ -52,17 +76,33 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   let title;
   await browser.sidebarAction.open();
   if (info.linkUrl) {
-    sendEvent("browse", "context-menu-link");
     url = info.linkUrl;
+    sendEvent({
+      ec: "interface",
+      ea: "load-url",
+      el: "context-menu-link",
+      forUrl: url,
+    })
   } else if (info.bookmarkId) {
     let bookmarkInfo = await browser.bookmarks.get(info.bookmarkId);
     url = bookmarkInfo[0].url;
+    sendEvent({
+      ec: "interface",
+      ea: "load-url",
+      el: "context-menu-bookmark",
+      forUrl: url,
+    });
   } else {
     // FIXME: should distinguish between clicking in the page, and on the tab:
-    sendEvent("browse", "context-menu-page");
     url = tab.url;
     title = tab.title;
     favIconUrl = tab.favIconUrl;
+    sendEvent({
+      ec: "interface",
+      ea: "load-url",
+      el: "context-menu-page",
+      forUrl: url,
+    });
   }
   if (title) {
     // In cases when we can't get a good title and favicon, we just don't bother saving it as a recent tab
@@ -75,11 +115,16 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
 
 browser.browserAction.onClicked.addListener(async () => {
   await browser.sidebarAction.open();
-  sendEvent("browse", "browserAction");
   let tabs = await browser.tabs.query({active: true, currentWindow: true});
   let url = tabs[0].url;
   addRecentTab({url, favIconUrl: tabs[0].favIconUrl, title: tabs[0].title});
   await openUrl(url);
+  sendEvent({
+    ec: "interface",
+    ea: "load-url",
+    el: "browser-action",
+    forUrl: url,
+  });
 });
 
 async function openUrl(url, windowId = null) {
@@ -101,7 +146,8 @@ browser.runtime.onMessage.addListener((message) => {
   if (message.type === "setDesktop") {
     setDesktop(message.desktop, message.url);
   } else if (message.type === "sendEvent") {
-    ga.sendEvent(message.ec, message.ea, message.eventParams);
+    delete message.type;
+    sendEvent(message);
   } else if (message.type === "sidebarOpened") {
     let windowId = message.windowId;
     if (sidebarUrls.get(windowId)) {
