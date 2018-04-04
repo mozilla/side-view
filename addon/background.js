@@ -82,7 +82,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       ea: "load-url",
       el: "context-menu-link",
       forUrl: url,
-    })
+    });
   } else if (info.bookmarkId) {
     let bookmarkInfo = await browser.bookmarks.get(info.bookmarkId);
     url = bookmarkInfo[0].url;
