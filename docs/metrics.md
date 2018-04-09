@@ -1,4 +1,3 @@
-
 # Side View Metrics
 
 Metrics collections and analysis plan for Side View as part of the [Firefox Test Pilot program](https://testpilot.firefox.com).
@@ -20,7 +19,7 @@ Data will be collected with Google Analytics and follow [Test Pilot standards](h
 
 ### Custom Dimensions
 
-* `cd1` - The width of the sidebar in pixels.  An integer
+* `cd1` - The width of the sidebar in pixels.  An integer, rounded to the nearest 50px.
 * `cd2` - The number of open tabs across all windows.  An integer
 * `cd3` - The site type requested.  One of `desktop` or `mobile`
 * `cd4` - The length of the list the user interacted with.  Used for open and recent tab lists.  An integer
@@ -28,34 +27,57 @@ Data will be collected with Google Analytics and follow [Test Pilot standards](h
 
 ### Events
 
+#### Startup / errors
+
+##### When add-on starts up (browser restart or new installation)
+
+Called each time the add-on starts up
+
+```
+ec: startup,
+ea: startup,
+ni: true
+```
+
+Note `ni` (not-interactive) will keep these events from being grouped under user activity.
+
+##### When a link cannot be added to Recent Tabs
+
+```
+ec: interface
+ea: fail-recent-tab
+el: bookmark or link
+```
+
+Both bookmarks and links cannot be added to Recent Tabs; this event fires this situation occurs.
+
 #### `Interface`
 
-##### When the user chooses to load a link in the sidebar from the context menu activated on a page background
+##### When the user opens a link in the sidebar using the browserAction/toolbar button
+
+```
+ec: interface,
+ea: load-url,
+el: browser-action,
+cd3
+```
+
+##### When the user chooses to load a link in the sidebar from the context menu activated on a page background or tab
 ```
 ec: interface,
 ea: load-url,
 el: context-menu-page,
-cd1,
 cd2,
 cd3
 ```
+
+(Note we can't distinguish between context menu clicks on the page background and a context menu on a tab.)
 
 ##### When the user chooses to load a link in the sidebar from the context menu activated on a link
 ```
 ec: interface,
 ea: load-url,
 el: context-menu-link,
-cd1,
-cd2,
-cd3
-```
-
-##### When the user chooses to load a link in the sidebar from the context menu activated on a tab
-```
-ec: interface,
-ea: load-url,
-el: context-menu-tab,
-cd1,
 cd2,
 cd3
 ```
@@ -65,7 +87,6 @@ cd3
 ec: interface,
 ea: load-url,
 el: context-menu-bookmark,
-cd1,
 cd2,
 cd3
 ```

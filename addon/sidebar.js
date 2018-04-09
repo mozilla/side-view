@@ -145,7 +145,8 @@ function renderTabList(tabs, containerSelector, eventLabel) {
 }
 
 function sendEvent(args) {
-  args.cd1 = window.innerWidth;
+  // We bucket to the nearest 50px:
+  args.cd1 = Math.round(window.innerWidth / 50) * 50;
   args.type = "sendEvent";
   browser.runtime.sendMessage(args);
 }
