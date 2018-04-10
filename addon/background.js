@@ -93,7 +93,6 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       forUrl: url,
     });
   } else {
-    // FIXME: should distinguish between clicking in the page, and on the tab:
     url = tab.url;
     title = tab.title;
     favIconUrl = tab.favIconUrl;
@@ -107,6 +106,13 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   if (title) {
     // In cases when we can't get a good title and favicon, we just don't bother saving it as a recent tab
     addRecentTab({url, favIconUrl, title});
+  } else {
+    let eventLabel = info.bookmarkId ? "bookmark" : "link";
+    sendEvent({
+      ec: "interface",
+      ea: "fail-recent-tab",
+      el: eventLabel,
+    });
   }
   // FIXME: should send something in the event about whether the sidebar is already open
   // FIXME: should send something in the event about whether tab.id === -1 (probably from the sidebar itself)
