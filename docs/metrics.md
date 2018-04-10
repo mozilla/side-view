@@ -49,7 +49,7 @@ ea: fail-recent-tab
 el: bookmark or link
 ```
 
-Both bookmarks and links cannot be added to Recent Tabs; this event fires this situation occurs.
+Both bookmarks and links cannot be added to Recent Tabs; this event fires when this situation occurs.
 
 #### `Interface`
 
