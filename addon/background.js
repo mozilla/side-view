@@ -114,24 +114,25 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       el: eventLabel,
     });
   }
+  browser.sidebarAction.setPanel({panel: url});
   // FIXME: should send something in the event about whether the sidebar is already open
   // FIXME: should send something in the event about whether tab.id === -1 (probably from the sidebar itself)
-  await openUrl(url);
+  //await openUrl(url);
 });
 
-browser.browserAction.onClicked.addListener(async () => {
-  await browser.sidebarAction.open();
-  let tabs = await browser.tabs.query({active: true, currentWindow: true});
-  let url = tabs[0].url;
-  addRecentTab({url, favIconUrl: tabs[0].favIconUrl, title: tabs[0].title});
-  await openUrl(url);
-  sendEvent({
-    ec: "interface",
-    ea: "load-url",
-    el: "browser-action",
-    forUrl: url,
-  });
-});
+//browser.browserAction.onClicked.addListener(async () => {
+//  await browser.sidebarAction.open();
+//  let tabs = await browser.tabs.query({active: true, currentWindow: true});
+//  let url = tabs[0].url;
+//  addRecentTab({url, favIconUrl: tabs[0].favIconUrl, title: tabs[0].title});
+//  await openUrl(url);
+//  sendEvent({
+//    ec: "interface",
+//    ea: "load-url",
+//    el: "browser-action",
+//    forUrl: url,
+//  });
+//});
 
 async function openUrl(url, windowId = null) {
   // FIXME: should send something in an event about whether the desktop has already been set
