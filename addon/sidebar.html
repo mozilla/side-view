@@ -3,10 +3,11 @@
   <head>
     <meta charset="UTF-8">
     <title>Sidebar</title>
+    <link rel="stylesheet" href="common.css"/>
     <link rel="stylesheet" href="sidebar.css"/>
   </head>
   <body>
-    <div id="home-container" style="display:none">
+    <div id="home-container">
       <a class="feedback-button" href="">
         <span class="feedback-button__copy">Feedback</span>
         <div class="feedback-button__icon"></div>
@@ -16,40 +17,6 @@
           Use the context (right-click) menu to open pages in this sidebar.
         </p>
       </section>
-      <section class="tabs-section" id="recent-tabs">
-        <h2 class="tabs-section__title">Recent Tabs</h2>
-        <ul id="recent-tabs-list" class="tabs-section__list">
-          <!--TODO: Populate this section from localstorage,
-            this section should be invisible if !recentTabs || in private browsing -->
-        </ul>
-      </section>
-      <section class="tabs-section" id="open-tabs">
-        <h2 class="tabs-section__title">Current Tabs</h2>
-        <ul id="open-tabs-list" class="tabs-section__list">
-        </ul>
-      </section>
-    </div>
-    <div id="browser-container">
-      <div class="toolbar">
-        <button id="home" class="toolbar__home" title="Home"></button>
-        <span id="browser-domain" class="toolbar__domain"></span>
-        <button id="refresh" class="toolbar__refresh" title="Refresh"></button>
-      </div>
-      <div id="iframe-container">
-        <!-- Permissions which are not granted:
-          allow-popups
-          allow-popups-to-escape-sandbox
-          allow-same-origin
-          allow-top-navigation
-          allow-top-navigation-by-user-activation
-        -->
-        <iframe id="browser-iframe" src="about:blank" sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-presentation allow-scripts allow-popups"></iframe>
-      </div>
-      <label class="site-request" for="desktop">
-        <span>Request desktop site</span>
-        <input type="checkbox" id="desktop">
-      </label>
-    </div>
 
     <script src="build/buildSettings.js"></script>
     <script src="sidebar.js"></script>
