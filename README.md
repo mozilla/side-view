@@ -12,6 +12,10 @@ Check out the repository. Go to `about:debugging` in Firefox, and select **Load 
 
 Or: install [`web-ext`](https://github.com/mozilla/web-ext) (like `npm i -g web-ext`) and run `web-ext run -s addon/ --browser-console -f nightly`
 
+## Pre-built add-on
+
+The version of the addon in the [production branch](https://github.com/mozilla/side-view/tree/production) is built into [a signed XPI (clicking on this link will install the add-on)](https://testpilot.firefox.com/files/side-view@mozilla.org/latest).
+
 ## Using
 
 This adds a context menu item: **Open in sidebar** or **Open link in sidebar**. Select that, and the sidebar will be opened with a mobile view of the page.
