@@ -115,24 +115,19 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
     });
   }
   browser.sidebarAction.setPanel({panel: url});
-  // FIXME: should send something in the event about whether the sidebar is already open
-  // FIXME: should send something in the event about whether tab.id === -1 (probably from the sidebar itself)
-  //await openUrl(url);
 });
 
-//browser.browserAction.onClicked.addListener(async () => {
-//  await browser.sidebarAction.open();
-//  let tabs = await browser.tabs.query({active: true, currentWindow: true});
-//  let url = tabs[0].url;
-//  addRecentTab({url, favIconUrl: tabs[0].favIconUrl, title: tabs[0].title});
-//  await openUrl(url);
-//  sendEvent({
-//    ec: "interface",
-//    ea: "load-url",
-//    el: "browser-action",
-//    forUrl: url,
-//  });
-//});
+browser.pageAction.onClicked.addListener((async (tab) => {
+  let url = tab.url;
+  addRecentTab({url, favIconUrl: tab.favIconUrl, title: tab.title});
+  sendEvent({
+    ec: "interface",
+    ea: "load-url",
+    el: "page-action",
+    forUrl: url,
+  });
+  browser.sidebarAction.setPanel({panel: url});
+}));
 
 async function openUrl(url, windowId = null) {
   // FIXME: should send something in an event about whether the desktop has already been set
@@ -178,7 +173,7 @@ browser.runtime.onMessage.addListener((message) => {
 // It only matches embedded iframes
 let requestFilter = {
   tabId: -1,
-  types: ["sub_frame"],
+  types: ["main_frame"],
   urls: ["http://*/*", "https://*/*"],
 };
 
@@ -200,19 +195,26 @@ async function addRecentTab(tabInfo) {
   recentTabs = recentTabs.filter((item) => item.url !== tabInfo.url);
   recentTabs.unshift(tabInfo);
   recentTabs.splice(MAX_RECENT_TABS);
-  await browser.runtime.sendMessage({
-    type: "updateRecentTabs",
-    recentTabs
-  });
+  try {
+    await browser.runtime.sendMessage({
+      type: "updateRecentTabs",
+      recentTabs
+    });
+  } catch (error) {
+    if (String(error).includes("Could not establish connection")) {
+      // We're just speculatively sending messages to the popup, it might not be open,
+      // and that is fine
+    } else {
+      console.error("Got updating recent tabs:", String(error), error);
+    }
+  }
   await browser.storage.sync.set({recentTabs});
 }
 
 // Add a mobile header to outgoing requests
 browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
   let hostname = (new URL(info.url)).hostname;
-  // Note, if info.parentFrameId is not zero, then this request is for a sub-sub-iframe, i.e.,
-  // an iframe embedded in another iframe, and not the top-level iframe we want to rewrite
-  if (info.parentFrameId || desktopHostnames[hostname]) {
+  if (desktopHostnames[hostname]) {
     return {};
   }
   let headers = info.requestHeaders;
@@ -226,7 +228,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
   return {};
 }, requestFilter, ["blocking", "requestHeaders"]);
 
-// Remove X-Frame-Options to allow any page to be embedded in an iframe
+// Remove WWW-Authenticate so frames sidebar won't open up password prompts
 chrome.webRequest.onHeadersReceived.addListener(function (info) {
   // Note, if info.parentFrameId is not zero, then this request is for a sub-sub-iframe, i.e.,
   // an iframe embedded in another iframe, and not the top-level iframe we want to rewrite
@@ -237,13 +239,9 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
   let madeChanges = false;
   for (let i = 0; i < headers.length; i++) {
     let name = headers[i].name.toLowerCase();
-    if (name === "x-frame-options" || name === "frame-options" || name === "www-authenticate") {
+    if (name === "www-authenticate") {
       headers.splice(i, 1);
       i--;
-      madeChanges = true;
-    }
-    if (name === "content-security-policy") {
-      headers[i].value = headers[i].value.replace(/frame-ancestors[^;]*;?/i, "");
       madeChanges = true;
     }
   }
