@@ -53,12 +53,12 @@ Both bookmarks and links cannot be added to Recent Tabs; this event fires when t
 
 #### `Interface`
 
-##### When the user opens a link in the sidebar using the browserAction/toolbar button
+##### When the user opens a link in the sidebar using the pageAction button
 
 ```
 ec: interface,
 ea: load-url,
-el: browser-action,
+el: page-action,
 cd3
 ```
 
