@@ -1,15 +1,21 @@
 let lastDisplayedUrl;
-let thisWindowId;
 let recentTabs = [];
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
-async function displayPage(url, desktop, hasTransition = true ) {
+async function displayPage({url, title, favIconUrl}) {
+  // Note this must be called in response to an event, so we can't call it in background.js:
+  await browser.sidebarAction.open();
   renderTabListLastRendered = {};
   lastDisplayedUrl = url;
-  browser.sidebarAction.setPanel({panel: url});
   for (let eventName of rerenderEvents) {
     browser.tabs[eventName].removeListener(updateHome);
   }
+  await browser.runtime.sendMessage({
+    type: "openUrl",
+    url,
+    title,
+    favIconUrl,
+  });
   await sendEvent({
     ec: "content",
     ea: "load-url",
@@ -59,13 +65,6 @@ function renderTabList(tabs, containerSelector, eventLabel) {
     text.textContent = title;
     renderedInfo += title + "\n";
     anchor.addEventListener("click", (event) => {
-      browser.runtime.sendMessage({
-        type: "sidebarOpenedPage",
-        windowId: thisWindowId,
-        url,
-        favIconUrl,
-        title
-      });
       sendEvent({
         ec: "interface",
         ea: "load-url",
@@ -74,7 +73,11 @@ function renderTabList(tabs, containerSelector, eventLabel) {
         cd4: tabs.length,
         cd5: index
       });
-      displayPage(url);
+      displayPage({
+        url,
+        favIconUrl,
+        title,
+      });
     });
     anchor.prepend(image);
     anchor.appendChild(text);
@@ -108,17 +111,8 @@ element(".feedback-button").addEventListener("click", () => {
 });
 
 async function init() {
-  const windowInfo = await browser.windows.getCurrent();
-  thisWindowId = windowInfo.id;
-
   browser.runtime.onMessage.addListener((message) => {
-    if (message.windowId && thisWindowId && message.windowId !== thisWindowId) {
-      // Not intended for this window
-      return;
-    }
-    if (message.type === "browse") {
-      displayPage(message.url, message.desktop, false);
-    } else if (message.type === "updateRecentTabs") {
+    if (message.type === "updateRecentTabs") {
       recentTabs = message.recentTabs;
       updateHome();
     } else if (["setDesktop", "sendEvent", "sidebarOpened", "sidebarOpenedPage", "sidebarDisplayedHome", "getRecentTabs"].includes(message.type)) {
@@ -127,8 +121,6 @@ async function init() {
       console.error("Got unexpected message:", message);
     }
   });
-
-  browser.runtime.sendMessage({type: "sidebarOpened", windowId: thisWindowId});
 
   recentTabs = await browser.runtime.sendMessage({
     type: "getRecentTabs"
