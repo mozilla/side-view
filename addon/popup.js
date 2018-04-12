@@ -1,18 +1,12 @@
 let lastDisplayedUrl;
 let thisWindowId;
 let recentTabs = [];
-const ANIMATION_TIME = 300;
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
 function displayPage(url, desktop, hasTransition = true ) {
   renderTabListLastRendered = {};
-  //slideUI(true, hasTransition);
   lastDisplayedUrl = url;
-  //element("#browser-iframe").src = url;
   browser.sidebarAction.setPanel({panel: url});
-  let urlObj = new URL(url);
-  //element("#browser-domain").textContent = urlObj.hostname;
-  //element("#desktop").checked = !!desktop;
   for (let eventName of rerenderEvents) {
     browser.tabs[eventName].removeListener(updateHome);
   }
@@ -22,43 +16,6 @@ function displayPage(url, desktop, hasTransition = true ) {
     el: "child-page",
     forUrl: url,
   });
-}
-
-// helper function for state changes
-function slideUI(showBrowser, hasTransition) {
-  const browserContainer = element("#browser-container");
-  const homeContainer = element("#home-container");
-  const time = hasTransition ? ANIMATION_TIME : 0;
-  if (showBrowser) {
-    browserContainer.style.display = "block";
-    browserContainer.style.transitionDuration = `${time}ms`;
-    browserContainer.style.transform = "translate3D(0, 0, 0)";
-    hideViewAfter(homeContainer, time);
-  } else {
-    browserContainer.style.transform = "translate3D(100%, 0, 0)";
-    homeContainer.style.display = "block";
-    dumpIframeContentsAfter(time);
-    hideViewAfter(browserContainer, time);
-  }
-}
-
-// helper function for delayed view hiding
-function hideViewAfter(element, time) {
-  setTimeout(() => {
-    element.style.display = "none";
-  }, time);
-}
-
-// so that iframe doesn't flash on next load,
-// clear it after css animates it out.
-function dumpIframeContentsAfter(time) {
-  if (!time) {
-    element("#browser-iframe").src = "./loading.html";
-  } else {
-    setTimeout(() => {
-      element("#browser-iframe").src = "./loading.html";
-    }, time);
-  }
 }
 
 async function updateHome(event) {
@@ -96,7 +53,6 @@ function renderTabList(tabs, containerSelector, eventLabel) {
     }
     renderedInfo += favIconUrl + " ";
     let anchor = document.createElement("a");
-    //anchor.href = url;
     renderedInfo += url + " ";
     anchor.classList.add("tab");
     text.textContent = title;
@@ -118,8 +74,6 @@ function renderTabList(tabs, containerSelector, eventLabel) {
         cd5: index
       });
       displayPage(url);
-      //event.preventDefault();
-      //return false;
     });
     anchor.prepend(image);
     anchor.appendChild(text);
