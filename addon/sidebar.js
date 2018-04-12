@@ -16,7 +16,6 @@ element(".feedback-button").addEventListener("click", () => {
     ec: "interface",
     ea: "button-click",
     el: "feedback",
-    forUrl: lastDisplayedUrl,
   });
 });
 
