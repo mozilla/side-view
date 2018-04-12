@@ -1,19 +1,56 @@
-
 /* Home page styles */
 
-.tabs-section {
-  border-bottom: 1px solid var(--grey-30);
-  margin-bottom: 20px;
-  padding-bottom: 10px;
+body {
+  border-radius: 3px;
+  margin: 0;
+  overflow: hidden;
+  width: 320px;
 }
 
-.tabs-section:last-child {
-  border-bottom: 0;
+body,
+html {
+  background-color: var(--grey-10);
+  font: message-box;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#panel {
+  padding: 6px 0 0;
+}
+
+#panel,
+.tabs-section__title,
+.tab {
+  font: menu;
+}
+
+.separator {
+  background: hsla(210, 4%, 10%, 0.14);
+  height: 1px;
+  margin: 6px 0;
+}
+
+.tabs-wrapper {
+  max-height: 600px;
+  overflow: auto;
+  padding-bottom: 6px;
 }
 
 .tabs-section__title {
+  align-items: center;
+  color: GrayText;
+  display: flex;
+  font-weight: normal;
+  height: 24px;
   margin: 0;
-  padding: 0 16px 8px;
+  padding: 4px 12px;
 }
 
 .tabs-section__list {
@@ -22,27 +59,22 @@
   padding: 0;
 }
 
-.tab {
-  color: var(--grey-90);
+.tab,
+.toggles__element {
+  align-items: center;
   display: flex;
-  padding: 10px 32px 10px 16px;
-  position: relative;
-  text-decoration: none;
-  width: 100%;
+  font-weight: normal;
+  height: 26.5px;
+  padding: 4px 12px;
+  padding-inline-start: 18px;
 }
 
-.tab::after {
-  background: url(images/back-12.svg);
-  background-size: 12px 12px;
-  content: '';
-  height: 12px;
-  position: absolute;
-  right: 10px;
-  transform: rotate(180deg);
-  width: 12px;
+.toggles__element {
+  justify-content: space-between;
 }
 
-.tab:hover {
+.tab:hover,
+.toggles__element:hover {
   background: var(--grey-20);
 }
 
@@ -55,7 +87,7 @@
   background-size: 16px 16px;
   flex: 0 0 16px;
   height: 16px;
-  margin-right: 6px;
+  margin-inline-end: 8px;
 }
 
 /* this is a hack if, for any reason, a site does not
@@ -72,42 +104,60 @@ supply a favicon */
   white-space: nowrap;
 }
 
+.toggles__toggle {
+  display: block;
+  width: 24px;
+  height: 16px;
+  position: relative;
+  border-radius: 8px;
+}
+
+.toggles--disabled .toggles__element {
+  opacity: 0.3;
+}
+
+.toggles--disabled .toggles__element:hover {
+  background: transparent;
+}
+
+.toggles--default .toggles__toggle,
+.toggles--disabled .toggles__toggle {
+  background: #d7d7db;
+}
+
+.toggles--active .toggles__toggle {
+  background: #0a84ff;
+}
+
+.toggles__toggle::after {
+  background: #fff;
+  border-radius: 4.5px;
+  content: '';
+  height: 9px;
+  left: 3.5px;
+  position: absolute;
+  top: 3.5px;
+  width: 9px;
+}
+
+.toggles--active .toggles__toggle::after {
+  left: auto;
+  right: 3.5px;
+}
+
 .feedback-button {
   align-items: center;
-  background: var(--blue-60);
-  border-radius: 2px;
-  cursor: pointer;
+  background: hsla(0, 0%, 80%, 0.3);
+  border-top: 1px solid hsla(210, 4%, 10%, 0.14);
+  color: rgb(26, 26, 26);
+  cursor: default;
   display: flex;
-  font-size: 14px;
-  height: 28px;
-  justify-content: flex-end;
-  overflow: hidden;
-  padding: 0 5px 0 7px;
-  position: fixed;
-  right: 20px;
+  height: 41px;
+  padding: 12px 4px;
+  padding-inline-start: 18px;
   text-decoration: none;
-  bottom: 20px;
-  transition: width 200ms;
-  white-space: nowrap;
-  width: 28px;
-  box-shadow: 0 0 50px 20px var(--grey-10);
-  z-index: 1;
 }
 
 .feedback-button:hover {
-  width: 100px;
+  background: rgba(204, 204, 204, 0.3);
 }
-
-.feedback-button__copy {
-  color: var(--white-100);
-  margin-right: 7px;
-}
-
-.feedback-button__icon {
-  background: url(images/feedback.svg) no-repeat;
-  display: block;
-  flex: 0 0 16px;
-  height: 16px;
-  margin: 0;
-}
-
