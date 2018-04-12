@@ -3,19 +3,20 @@ let thisWindowId;
 let recentTabs = [];
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
-function displayPage(url, desktop, hasTransition = true ) {
+async function displayPage(url, desktop, hasTransition = true ) {
   renderTabListLastRendered = {};
   lastDisplayedUrl = url;
   browser.sidebarAction.setPanel({panel: url});
   for (let eventName of rerenderEvents) {
     browser.tabs[eventName].removeListener(updateHome);
   }
-  sendEvent({
+  await sendEvent({
     ec: "content",
     ea: "load-url",
     el: "child-page",
     forUrl: url,
   });
+  window.close();
 }
 
 async function updateHome(event) {
