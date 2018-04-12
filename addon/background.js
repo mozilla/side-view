@@ -13,6 +13,7 @@ const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gec
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
 const sidebarUrls = new Map();
+let sidebarWidth;
 
 const ga = new TestPilotGA({
   an: "side-view",
@@ -32,6 +33,7 @@ async function sendEvent(args) {
     args.cd3 = desktopHostnames[hostname] ? "desktop" : "mobile";
   }
   args.cd2 = await countTabs();
+  args.cd1 = sidebarWidth;
   ga.sendEvent(args.ec, args.ea, args);
 }
 
@@ -114,7 +116,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       el: eventLabel,
     });
   }
-  browser.sidebarAction.setPanel({panel: url});
+  openUrl(url);
 });
 
 browser.pageAction.onClicked.addListener((async (tab) => {
@@ -126,20 +128,13 @@ browser.pageAction.onClicked.addListener((async (tab) => {
     el: "page-action",
     forUrl: url,
   });
-  browser.sidebarAction.setPanel({panel: url});
+  openUrl(url);
 }));
 
-async function openUrl(url, windowId = null) {
-  // FIXME: should send something in an event about whether the desktop has already been set
-  if (!windowId) {
-    windowId = (await browser.windows.getCurrent()).id;
-  }
-  let desktop = !!desktopHostnames[(new URL(url)).hostname];
-  let message = {type: "browse", url, windowId, desktop};
+async function openUrl(url) {
+  let windowId = (await browser.windows.getCurrent()).id;
   sidebarUrls.set(windowId, url);
-  return retry(() => {
-    return browser.runtime.sendMessage(message);
-  }, {times: 3, wait: 50});
+  browser.sidebarAction.setPanel({panel: url});
 }
 
 /* eslint-disable consistent-return */
@@ -151,15 +146,15 @@ browser.runtime.onMessage.addListener((message) => {
     delete message.type;
     sendEvent(message);
   } else if (message.type === "sidebarOpened") {
+    sidebarWidth = message.width;
     let windowId = message.windowId;
+    // FIXME: should probably test that the windowId is the current active window
     if (sidebarUrls.get(windowId)) {
-      openUrl(sidebarUrls.get(windowId), windowId);
+      openUrl(sidebarUrls.get(windowId));
     }
-  } else if (message.type === "sidebarOpenedPage") {
-    sidebarUrls.set(message.windowId, message.url);
+  } else if (message.type === "openUrl") {
+    openUrl(message.url);
     addRecentTab(message);
-  } else if (message.type === "sidebarDisplayHome") {
-    sidebarUrls.delete(message.windowId);
   } else if (message.type === "getRecentTabs") {
     return Promise.resolve(recentTabs);
   } else {
@@ -250,27 +245,6 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
   }
   return {};
 }, requestFilter, ["blocking", "responseHeaders"]);
-
-async function retry(attempter, options) {
-  let times = options.times || 3;
-  let wait = options.wait || 100;
-  try {
-    return await attempter();
-  } catch (error) {
-    times--;
-    if (times <= 0) {
-      throw error;
-    }
-    await timeout(wait);
-    return retry(attempter, {times, wait});
-  }
-}
-
-function timeout(time) {
-  return new Promise((resolve) => {
-    setTimeout(resolve, time);
-  });
-}
 
 async function init() {
   const result = await browser.storage.sync.get(["desktopHostnames", "recentTabs"]);
