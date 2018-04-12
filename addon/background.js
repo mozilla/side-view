@@ -178,7 +178,7 @@ browser.runtime.onMessage.addListener((message) => {
 // It only matches embedded iframes
 let requestFilter = {
   tabId: -1,
-  types: ["sub_frame"],
+  types: ["main_frame"],
   urls: ["http://*/*", "https://*/*"],
 };
 
@@ -210,9 +210,7 @@ async function addRecentTab(tabInfo) {
 // Add a mobile header to outgoing requests
 browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
   let hostname = (new URL(info.url)).hostname;
-  // Note, if info.parentFrameId is not zero, then this request is for a sub-sub-iframe, i.e.,
-  // an iframe embedded in another iframe, and not the top-level iframe we want to rewrite
-  if (info.parentFrameId || desktopHostnames[hostname]) {
+  if (desktopHostnames[hostname]) {
     return {};
   }
   let headers = info.requestHeaders;
@@ -226,7 +224,7 @@ browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
   return {};
 }, requestFilter, ["blocking", "requestHeaders"]);
 
-// Remove X-Frame-Options to allow any page to be embedded in an iframe
+// Remove WWW-Authenticate so frames sidebar won't open up password prompts
 chrome.webRequest.onHeadersReceived.addListener(function (info) {
   // Note, if info.parentFrameId is not zero, then this request is for a sub-sub-iframe, i.e.,
   // an iframe embedded in another iframe, and not the top-level iframe we want to rewrite
@@ -237,13 +235,9 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
   let madeChanges = false;
   for (let i = 0; i < headers.length; i++) {
     let name = headers[i].name.toLowerCase();
-    if (name === "x-frame-options" || name === "frame-options" || name === "www-authenticate") {
+    if (name === "www-authenticate") {
       headers.splice(i, 1);
       i--;
-      madeChanges = true;
-    }
-    if (name === "content-security-policy") {
-      headers[i].value = headers[i].value.replace(/frame-ancestors[^;]*;?/i, "");
       madeChanges = true;
     }
   }
