@@ -117,6 +117,18 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   browser.sidebarAction.setPanel({panel: url});
 });
 
+browser.pageAction.onClicked.addListener((async (tab) => {
+  let url = tab.url;
+  addRecentTab({url, favIconUrl: tab.favIconUrl, title: tab.title});
+  sendEvent({
+    ec: "interface",
+    ea: "load-url",
+    el: "page-action",
+    forUrl: url,
+  });
+  browser.sidebarAction.setPanel({panel: url});
+}));
+
 async function openUrl(url, windowId = null) {
   // FIXME: should send something in an event about whether the desktop has already been set
   if (!windowId) {
@@ -183,10 +195,19 @@ async function addRecentTab(tabInfo) {
   recentTabs = recentTabs.filter((item) => item.url !== tabInfo.url);
   recentTabs.unshift(tabInfo);
   recentTabs.splice(MAX_RECENT_TABS);
-  await browser.runtime.sendMessage({
-    type: "updateRecentTabs",
-    recentTabs
-  });
+  try {
+    await browser.runtime.sendMessage({
+      type: "updateRecentTabs",
+      recentTabs
+    });
+  } catch (error) {
+    if (String(error).includes("Could not establish connection")) {
+      // We're just speculatively sending messages to the popup, it might not be open,
+      // and that is fine
+    } else {
+      console.error("Got updating recent tabs:", String(error), error);
+    }
+  }
   await browser.storage.sync.set({recentTabs});
 }
 
