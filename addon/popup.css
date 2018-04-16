@@ -61,6 +61,11 @@ body {
   padding: 0;
 }
 
+#open-tabs-list {
+  max-height: 340px;
+  overflow: scroll;
+}
+
 .tab {
   align-items: center;
   display: flex;
@@ -70,7 +75,8 @@ body {
   padding-inline-start: 18px;
 }
 
-.tab:hover {
+.tab:hover,
+.tab:focus {
   background: rgba(204, 204, 204, 0.3);
 }
 
