@@ -30,7 +30,7 @@
     "start": "npm-run-all build run",
     "lint": "npm-run-all lint:*",
     "lint:addon": "npm run package && addons-linter ./addon.xpi -o text",
-    "lint:js": "eslint addon",
+    "lint:js": "eslint .",
     "lint:styles": "stylelint ./addon/*.css",
     "build": "npm-run-all build:*",
     "build:ga": "mkdir -p addon/build && cp $(node -e 'console.log(require.resolve(\"testpilot-ga\"))') addon/build/testpilot-ga.js",
