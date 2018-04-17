@@ -62,6 +62,7 @@ function renderTabList(tabs, containerSelector, eventLabel) {
     let anchor = document.createElement("a");
     renderedInfo += url + " ";
     anchor.classList.add("tab");
+    anchor.setAttribute("tabIndex", "0");
     text.textContent = title;
     renderedInfo += title + "\n";
     anchor.addEventListener("click", (event) => {
