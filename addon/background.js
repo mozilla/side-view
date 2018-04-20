@@ -12,7 +12,6 @@ const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gec
 
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
-const sidebarUrls = new Map();
 let sidebarWidth;
 
 const ga = new TestPilotGA({
@@ -136,11 +135,6 @@ browser.pageAction.onClicked.addListener((async (tab) => {
 }));
 
 async function openUrl(url) {
-  let windowInfo = await browser.windows.getCurrent();
-  let windowId = windowInfo.id;
-  if (!windowInfo.incognito) {
-    sidebarUrls.set(windowId, url);
-  }
   browser.sidebarAction.setPanel({panel: url});
 }
 
@@ -154,11 +148,6 @@ browser.runtime.onMessage.addListener(async (message) => {
     sendEvent(message);
   } else if (message.type === "sidebarOpened") {
     sidebarWidth = message.width;
-    let windowId = message.windowId;
-    // FIXME: should probably test that the windowId is the current active window
-    if (sidebarUrls.get(windowId)) {
-      openUrl(sidebarUrls.get(windowId));
-    }
   } else if (message.type === "openUrl") {
     openUrl(message.url);
     let windowInfo = await browser.windows.getCurrent();
