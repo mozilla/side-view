@@ -12,6 +12,7 @@ const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gec
 
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
+let sidebarUrl;
 let sidebarWidth;
 
 const ga = new TestPilotGA({
@@ -26,10 +27,14 @@ const ga = new TestPilotGA({
 });
 
 async function sendEvent(args) {
-  if (args.forUrl) {
-    let hostname = (new URL(args.forUrl)).hostname;
+  if (args.forUrl || sidebarUrl) {
+    let hostname = (new URL(args.forUrl || sidebarUrl)).hostname;
     delete args.forUrl;
     args.cd3 = desktopHostnames[hostname] ? "desktop" : "mobile";
+  }
+  if (args.el === "toggle-desktop" && args.cd3) {
+    // The event emitter doesn't know whether the desktop or mobile site was requested
+    args.el = `request-${args.cd3}`;
   }
   args.cd2 = await countTabs();
   args.cd1 = sidebarWidth;
@@ -135,14 +140,23 @@ browser.pageAction.onClicked.addListener((async (tab) => {
 }));
 
 async function openUrl(url) {
+  sidebarUrl = url;
+  let hostname = (new URL(url)).hostname;
+  let isDesktop = !!desktopHostnames[hostname];
+  browser.runtime.sendMessage({
+    type: "isDesktop",
+    isDesktop,
+  }).catch((error) => {
+    // If the popup is not open this gives an error, but we don't care
+  });
   browser.sidebarAction.setPanel({panel: url});
 }
 
 /* eslint-disable consistent-return */
 // Because this dispatches to different kinds of functions, its return behavior is inconsistent
 browser.runtime.onMessage.addListener(async (message) => {
-  if (message.type === "setDesktop") {
-    setDesktop(message.desktop, message.url);
+  if (message.type === "toggleDesktop") {
+    toggleDesktop();
   } else if (message.type === "sendEvent") {
     delete message.type;
     sendEvent(message);
@@ -154,8 +168,16 @@ browser.runtime.onMessage.addListener(async (message) => {
     if (!windowInfo.incognito) {
       addRecentTab(message);
     }
-  } else if (message.type === "getRecentTabs") {
-    return Promise.resolve(recentTabs);
+  } else if (message.type === "getRecentAndDesktop") {
+    let isDesktop = false;
+    if (sidebarUrl) {
+      let hostname = (new URL(sidebarUrl)).hostname;
+      isDesktop = !!desktopHostnames[hostname];
+    }
+    return Promise.resolve({
+      recentTabs,
+      isDesktop,
+    });
   } else {
     console.error("Unexpected message to background:", message);
   }
@@ -173,13 +195,22 @@ let requestFilter = {
 
 let desktopHostnames = {};
 
-async function setDesktop(desktop, url) {
-  let hostname = (new URL(url)).hostname;
-  if (desktop) {
+async function toggleDesktop() {
+  if (!sidebarUrl) {
+    console.warn("Got toggle desktop with no known sidebar URL");
+    return;
+  }
+  let hostname = (new URL(sidebarUrl)).hostname;
+  let isDesktop = !desktopHostnames[hostname];
+  if (isDesktop) {
     desktopHostnames[hostname] = true;
   } else {
     delete desktopHostnames[hostname];
   }
+  // We can't trigger a real reload without changing the URL, so we change it to blank and then
+  // back to the previous URL:
+  browser.sidebarAction.setPanel({panel: "about:blank"});
+  openUrl(sidebarUrl);
   await browser.storage.sync.set({desktopHostnames});
 }
 

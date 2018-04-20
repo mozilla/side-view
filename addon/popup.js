@@ -1,4 +1,5 @@
 let lastDisplayedUrl;
+let isDesktop = false;
 let recentTabs = [];
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
 
@@ -37,6 +38,14 @@ async function updateHome(event) {
   let tabs = windowInfo.tabs.filter(tab => tab.url.startsWith("http"));
   renderTabList(tabs, "#open-tabs-list", "existing-tab");
   renderTabList(recentTabs, "#recent-tabs-list", "recent-tab");
+  let onElement = element(".ask-for-desktop");
+  let offElement = element(".ask-for-mobile");
+  if (isDesktop) {
+    [ onElement, offElement ] = [ offElement, onElement ];
+  }
+  element(".mobile-toggle").title = onElement.textContent;
+  onElement.style.display = "";
+  offElement.style.display = "none";
 }
 
 let renderTabListLastRendered = {};
@@ -111,10 +120,25 @@ element(".feedback-button").addEventListener("click", () => {
   });
 });
 
+element(".mobile-toggle").addEventListener("click", async () => {
+  await browser.runtime.sendMessage({
+    type: "toggleDesktop"
+  });
+  sendEvent({
+    ec: "interface",
+    ea: "button-click",
+    // Note: background.js changes this label based on whether it's desktop or not
+    el: "toggle-desktop",
+  });
+});
+
 async function init() {
   browser.runtime.onMessage.addListener((message) => {
     if (message.type === "updateRecentTabs") {
       recentTabs = message.recentTabs;
+      updateHome();
+    } else if (message.type === "isDesktop") {
+      isDesktop = message.isDesktop;
       updateHome();
     } else if (["setDesktop", "sendEvent", "sidebarOpened", "sidebarOpenedPage", "sidebarDisplayedHome", "getRecentTabs"].includes(message.type)) {
       // These intended to go to the backgrond and can be ignored here
@@ -123,9 +147,11 @@ async function init() {
     }
   });
 
-  recentTabs = await browser.runtime.sendMessage({
-    type: "getRecentTabs"
+  let info = await browser.runtime.sendMessage({
+    type: "getRecentAndDesktop"
   });
+  recentTabs = info.recentTabs;
+  isDesktop = info.isDesktop;
   updateHome();
 }
 
