@@ -10,6 +10,10 @@ const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gec
 // Chrome for Android:
 //   Mozilla/5.0 (Linux; Android 4.0.4; Galaxy Nexus Build/IMM76B) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.133 Mobile Safari/535.19
 
+const DEFAULT_DESKTOP_SITES = [
+  "www.youtube.com",
+];
+
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
 let sidebarUrl;
@@ -278,7 +282,14 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
 
 async function init() {
   const result = await browser.storage.sync.get(["desktopHostnames", "recentTabs"]);
-  desktopHostnames = result.desktopHostnames || {};
+  if (!result.desktopHostnames) {
+    desktopHostnames = {};
+    for (let hostname of DEFAULT_DESKTOP_SITES) {
+      desktopHostnames[hostname] = true;
+    }
+  } else {
+    desktopHostnames = result.desktopHostnames;
+  }
   recentTabs = result.recentTabs || [];
 }
 
