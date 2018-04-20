@@ -131,6 +131,7 @@ browser.pageAction.onClicked.addListener((async (tab) => {
     el: "page-action",
     forUrl: url,
   });
+  await browser.sidebarAction.open();
   openUrl(url);
 }));
 
