@@ -76,6 +76,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
   let url;
   let favIconUrl;
   let title;
+  let incognito = tab && tab.incognito;
   await browser.sidebarAction.open();
   if (info.linkUrl) {
     url = info.linkUrl;
@@ -105,7 +106,7 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
       forUrl: url,
     });
   }
-  if (title) {
+  if (title && !incognito) {
     // In cases when we can't get a good title and favicon, we just don't bother saving it as a recent tab
     addRecentTab({url, favIconUrl, title});
   } else {
@@ -121,7 +122,9 @@ browser.contextMenus.onClicked.addListener(async (info, tab) => {
 
 browser.pageAction.onClicked.addListener((async (tab) => {
   let url = tab.url;
-  addRecentTab({url, favIconUrl: tab.favIconUrl, title: tab.title});
+  if (!tab.incognito) {
+    addRecentTab({url, favIconUrl: tab.favIconUrl, title: tab.title});
+  }
   sendEvent({
     ec: "interface",
     ea: "load-url",
@@ -132,14 +135,17 @@ browser.pageAction.onClicked.addListener((async (tab) => {
 }));
 
 async function openUrl(url) {
-  let windowId = (await browser.windows.getCurrent()).id;
-  sidebarUrls.set(windowId, url);
+  let windowInfo = await browser.windows.getCurrent();
+  let windowId = windowInfo.id;
+  if (!windowInfo.incognito) {
+    sidebarUrls.set(windowId, url);
+  }
   browser.sidebarAction.setPanel({panel: url});
 }
 
 /* eslint-disable consistent-return */
 // Because this dispatches to different kinds of functions, its return behavior is inconsistent
-browser.runtime.onMessage.addListener((message) => {
+browser.runtime.onMessage.addListener(async (message) => {
   if (message.type === "setDesktop") {
     setDesktop(message.desktop, message.url);
   } else if (message.type === "sendEvent") {
@@ -154,7 +160,10 @@ browser.runtime.onMessage.addListener((message) => {
     }
   } else if (message.type === "openUrl") {
     openUrl(message.url);
-    addRecentTab(message);
+    let windowInfo = await browser.windows.getCurrent();
+    if (!windowInfo.incognito) {
+      addRecentTab(message);
+    }
   } else if (message.type === "getRecentTabs") {
     return Promise.resolve(recentTabs);
   } else {
