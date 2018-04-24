@@ -46,7 +46,12 @@ async function updateHome(event) {
     element("#recent-tabs").style.display = "block";
     renderTabList(recentTabs, "#recent-tabs-list", "recent-tab");
   } else {
-    element("#open-tabs").style.display = "none";
+    element("#recent-tabs").style.display = "none";
+  }
+  if (!tabs.length && !recentTabs.length) {
+    element("#getting-started").style.display = "block";
+  } else {
+    element("#getting-started").style.display = "none";
   }
   let onElement = element(".ask-for-desktop");
   let offElement = element(".ask-for-mobile");
