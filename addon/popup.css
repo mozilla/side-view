@@ -144,3 +144,8 @@ supply a favicon */
 .mobile-toggle:hover {
   background: hsla(0, 0%, 80%, 0.4);
 }
+
+#getting-started {
+  display: none;
+  padding: 1em;
+}

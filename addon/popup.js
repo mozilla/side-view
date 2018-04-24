@@ -36,8 +36,23 @@ async function updateHome(event) {
   }
   const windowInfo = await browser.windows.getCurrent({populate: true});
   let tabs = windowInfo.tabs.filter(tab => tab.url.startsWith("http"));
-  renderTabList(tabs, "#open-tabs-list", "existing-tab");
-  renderTabList(recentTabs, "#recent-tabs-list", "recent-tab");
+  if (tabs.length) {
+    element("#open-tabs").style.display = "block";
+    renderTabList(tabs, "#open-tabs-list", "existing-tab");
+  } else {
+    element("#open-tabs").style.display = "none";
+  }
+  if (recentTabs.length)  {
+    element("#recent-tabs").style.display = "block";
+    renderTabList(recentTabs, "#recent-tabs-list", "recent-tab");
+  } else {
+    element("#recent-tabs").style.display = "none";
+  }
+  if (!tabs.length && !recentTabs.length) {
+    element("#getting-started").style.display = "block";
+  } else {
+    element("#getting-started").style.display = "none";
+  }
   let onElement = element(".ask-for-desktop");
   let offElement = element(".ask-for-mobile");
   if (isDesktop) {
