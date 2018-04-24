@@ -42,7 +42,7 @@ async function updateHome(event) {
   } else {
     element("#open-tabs").style.display = "none";
   }
-  if (recentTabs.length)  {
+  if (recentTabs.length) {
     element("#recent-tabs").style.display = "block";
     renderTabList(recentTabs, "#recent-tabs-list", "recent-tab");
   } else {
