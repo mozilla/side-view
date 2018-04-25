@@ -20,6 +20,10 @@ The version of the addon in the [production branch](https://github.com/mozilla/s
 
 This adds a context menu item: **Open in sidebar** or **Open link in sidebar**. Select that, and the sidebar will be opened with a mobile view of the page.
 
+## Test Plan
+
+The QA/test plan is documented in [this document](https://docs.google.com/document/d/1D-wk5Yzr04RBW9RWAA3KQTecXl0aSBXTHrb1N9yDMrM/edit).
+
 ## Credits
 
 [Anthony_f](https://addons.mozilla.org/en-US/firefox/user/Anthony_f/)'s [Sidebar for Google Search](https://addons.mozilla.org/en-US/firefox/addon/sidebar-for-google-search/) inspired this add-on's approach.
