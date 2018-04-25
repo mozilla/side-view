@@ -148,6 +148,8 @@ element(".mobile-toggle").addEventListener("click", async () => {
 });
 
 async function init() {
+  document.addEventListener("contextmenu", event => event.preventDefault());
+
   browser.runtime.onMessage.addListener((message) => {
     if (message.type === "updateRecentTabs") {
       recentTabs = message.recentTabs;
