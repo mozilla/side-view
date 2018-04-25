@@ -147,6 +147,18 @@ element(".mobile-toggle").addEventListener("click", async () => {
   });
 });
 
+element("#close-private-warning").addEventListener("click", async () => {
+  await browser.runtime.sendMessage({
+    type: "turnOffPrivateWarning"
+  });
+  sendEvent({
+    ec: "interface",
+    ea: "button-click",
+    el: "turn-off-private-warning",
+  });
+  element("#private-warning").style.display = "none";
+});
+
 async function init() {
   document.addEventListener("contextmenu", event => event.preventDefault());
 
@@ -169,6 +181,9 @@ async function init() {
   });
   recentTabs = info.recentTabs;
   isDesktop = info.isDesktop;
+  if (info.incognito && !info.hasSeenPrivateWarning) {
+    element("#private-warning").style.display = "";
+  }
   updateHome();
 }
 

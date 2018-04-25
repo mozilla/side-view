@@ -149,3 +149,14 @@ supply a favicon */
   display: none;
   padding: 1em;
 }
+
+#private-warning {
+  max-width: 20em;
+  background: #800;
+  color: #fff;
+}
+
+#close-private-warning {
+  float: right;
+  cursor: pointer;
+}
