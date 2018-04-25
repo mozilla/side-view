@@ -12,6 +12,9 @@ const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gec
 
 const DEFAULT_DESKTOP_SITES = [
   "www.youtube.com",
+  "www.metacafe.com",
+  "myspace.com",
+  "imgur.com",
 ];
 
 const MAX_RECENT_TABS = 5;
