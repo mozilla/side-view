@@ -12,12 +12,16 @@ const USER_AGENT = `Mozilla/5.0 (Android 4.4; Mobile; rv:${FIREFOX_VERSION}) Gec
 
 const DEFAULT_DESKTOP_SITES = [
   "www.youtube.com",
+  "www.metacafe.com",
+  "myspace.com",
+  "imgur.com",
 ];
 
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
 let sidebarUrl;
 let sidebarWidth;
+let hasSeenPrivateWarning = false;
 
 const ga = new TestPilotGA({
   an: "side-view",
@@ -178,10 +182,15 @@ browser.runtime.onMessage.addListener(async (message) => {
       let hostname = (new URL(sidebarUrl)).hostname;
       isDesktop = !!desktopHostnames[hostname];
     }
+    let currentWindow = await browser.windows.getCurrent();
     return Promise.resolve({
       recentTabs,
       isDesktop,
+      hasSeenPrivateWarning,
+      incognito: currentWindow.incognito,
     });
+  } else if (message.type === "turnOffPrivateWarning") {
+    turnOffPrivateWarning();
   } else {
     console.error("Unexpected message to background:", message);
   }
@@ -280,8 +289,24 @@ chrome.webRequest.onHeadersReceived.addListener(function (info) {
   return {};
 }, requestFilter, ["blocking", "responseHeaders"]);
 
+function privateWarningOnUpdated(tabId, changeInfo, tab) {
+  if (tab.incognito) {
+    browser.browserAction.setBadgeText({text: "!", tabId: tab.id});
+  }
+}
+
+async function turnOffPrivateWarning() {
+  hasSeenPrivateWarning = true;
+  browser.tabs.onUpdated.removeListener(privateWarningOnUpdated);
+  let win = await browser.windows.getCurrent({populate: true});
+  for (let tab of win.tabs) {
+    browser.browserAction.setBadgeText({text: null, tabId: tab.id});
+  }
+  await browser.storage.sync.set({hasSeenPrivateWarning});
+}
+
 async function init() {
-  const result = await browser.storage.sync.get(["desktopHostnames", "recentTabs"]);
+  const result = await browser.storage.sync.get(["desktopHostnames", "recentTabs", "hasSeenPrivateWarning"]);
   if (!result.desktopHostnames) {
     desktopHostnames = {};
     for (let hostname of DEFAULT_DESKTOP_SITES) {
@@ -291,6 +316,10 @@ async function init() {
     desktopHostnames = result.desktopHostnames;
   }
   recentTabs = result.recentTabs || [];
+  hasSeenPrivateWarning = result.hasSeenPrivateWarning;
+  if (!hasSeenPrivateWarning) {
+    browser.tabs.onUpdated.addListener(privateWarningOnUpdated);
+  }
 }
 
 init();
