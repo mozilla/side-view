@@ -11,18 +11,20 @@ html {
 }
 
 body {
-  border-radius: 3px;
+  height: 100%;
   margin: 0;
-  min-height: 200px;
-  overflow: hidden;
+  min-width: 320px;
+  overflow: hidden !important;
 }
 
 #panel {
+  background: #fff;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  min-height: 100vh;
-  padding: 6px 0 0;
+  max-width: 400px;
+  min-width: 320px;
+  width: 100%;
 }
 
 #panel,
@@ -38,10 +40,17 @@ body {
 }
 
 .tabs-wrapper {
+  display: flex;
+  flex-direction: column;
   flex: 1;
-  max-height: 600px;
-  overflow: auto;
-  padding-bottom: 6px;
+}
+
+.tabs-section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  max-height: 300px;
+  overflow: hidden;
 }
 
 .tabs-section__title {
@@ -54,29 +63,38 @@ body {
   padding: 4px 12px;
 }
 
+.tabs-section:first-child .tabs-section__title {
+  margin-top: 6px;
+}
+
 .tabs-section__list {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
+#open-tabs {
+  display: flex;
+}
+
 #open-tabs-list {
-  max-height: 340px;
-  overflow: scroll;
+  flex: 1;
+  overflow-y: auto;
 }
 
 .tab {
   align-items: center;
+  background: #fff;
   display: flex;
   font-weight: normal;
   height: 26.5px;
-  padding: 4px 12px;
   padding-inline-start: 18px;
+  padding: 4px 12px;
 }
 
 .tab:hover,
 .tab:focus {
-  background: rgba(204, 204, 204, 0.3);
+  background: #ededf0;
 }
 
 .tab__image,
@@ -107,10 +125,9 @@ supply a favicon */
 
 .panel-footer {
   border-top: 1px solid hsla(210, 4%, 10%, 0.14);
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-template-rows: 41px;
-  margin-bottom: 0;
+  display: flex;
+  flex: 0 0 41px;
+  margin: 6px 0 0;
 }
 
 .panel-footer.toggle-disabled {
@@ -129,6 +146,7 @@ supply a favicon */
   color: rgb(26, 26, 26);
   cursor: default;
   display: flex;
+  flex: 1;
   font: menu;
   justify-content: center;
   margin-bottom: 0;
@@ -151,12 +169,22 @@ supply a favicon */
 }
 
 #private-warning {
-  max-width: 20em;
-  background: #800;
-  color: #fff;
+  background: #ededf0;
+  border-bottom: 1px dashed #d70022;
+  color: #d70022;
+  display: flex;
+}
+
+#close-private-warning-copy {
+  padding: 12px 0 12px 12px;
 }
 
 #close-private-warning {
-  float: right;
+  align-items: center;
   cursor: pointer;
+  display: flex;
+  flex: 0 0 24px;
+  height: 24px;
+  justify-content: center;
 }
+
