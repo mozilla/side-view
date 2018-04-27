@@ -37,19 +37,19 @@ async function updateHome(event) {
   const windowInfo = await browser.windows.getCurrent({populate: true});
   let tabs = windowInfo.tabs.filter(tab => tab.url.startsWith("http"));
   if (tabs.length) {
-    element("#open-tabs").style.display = "block";
+    element("#open-tabs").style.display = "flex";
     renderTabList(tabs, "#open-tabs-list", "existing-tab");
   } else {
     element("#open-tabs").style.display = "none";
   }
   if (recentTabs.length) {
-    element("#recent-tabs").style.display = "block";
+    element("#recent-tabs").style.display = "flex";
     renderTabList(recentTabs, "#recent-tabs-list", "recent-tab");
   } else {
     element("#recent-tabs").style.display = "none";
   }
   if (!tabs.length && !recentTabs.length) {
-    element("#getting-started").style.display = "block";
+    element("#getting-started").style.display = "flex";
   } else {
     element("#getting-started").style.display = "none";
   }
