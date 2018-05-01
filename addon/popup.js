@@ -69,6 +69,7 @@ function renderTabList(tabs, containerSelector, eventLabel) {
   let renderedInfo = "";
   const tabList = element(containerSelector);
   const newTabList = tabList.cloneNode();
+  let tabindex = 1;
   tabs.forEach((tab, index) => {
     let li = document.createElement("li");
     let image = document.createElement("span");
@@ -83,10 +84,9 @@ function renderTabList(tabs, containerSelector, eventLabel) {
       image.style.backgroundImage = `url(${favIconUrl})`;
     }
     renderedInfo += favIconUrl + " ";
-    let anchor = document.createElement("a");
+    let anchor = document.createElement("button");
     renderedInfo += url + " ";
     anchor.classList.add("tab");
-    anchor.setAttribute("tabIndex", "0");
     text.textContent = title;
     renderedInfo += title + "\n";
     anchor.addEventListener("click", (event) => {
