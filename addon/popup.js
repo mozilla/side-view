@@ -69,7 +69,6 @@ function renderTabList(tabs, containerSelector, eventLabel) {
   let renderedInfo = "";
   const tabList = element(containerSelector);
   const newTabList = tabList.cloneNode();
-  let tabindex = 1;
   tabs.forEach((tab, index) => {
     let li = document.createElement("li");
     let image = document.createElement("span");
