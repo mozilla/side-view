@@ -84,6 +84,8 @@ body {
 
 .tab {
   align-items: center;
+  border: 0;
+  width: 100%;
   background: #fff;
   display: flex;
   font-weight: normal;
@@ -134,13 +136,10 @@ supply a favicon */
   grid-template-columns: 1fr;
 }
 
+.feedback-button,
 .mobile-toggle {
   border: 0;
   border-inline-end: 1px solid hsla(210, 4%, 10%, 0.14);
-}
-
-.feedback-button,
-.mobile-toggle {
   align-items: center;
   background: hsla(0, 0%, 80%, 0.3);
   color: rgb(26, 26, 26);

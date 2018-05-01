@@ -83,10 +83,9 @@ function renderTabList(tabs, containerSelector, eventLabel) {
       image.style.backgroundImage = `url(${favIconUrl})`;
     }
     renderedInfo += favIconUrl + " ";
-    let anchor = document.createElement("a");
+    let anchor = document.createElement("button");
     renderedInfo += url + " ";
     anchor.classList.add("tab");
-    anchor.setAttribute("tabIndex", "0");
     text.textContent = title;
     renderedInfo += title + "\n";
     anchor.addEventListener("click", (event) => {
