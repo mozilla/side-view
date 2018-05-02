@@ -159,6 +159,16 @@ element("#close-private-warning").addEventListener("click", async () => {
   element("#private-warning").style.display = "none";
 });
 
+function loadCachedRecentTabs() {
+  let value = localStorage.getItem("recentTabs") || "[]";
+  value = JSON.parse(value);
+  return value;
+}
+
+function cacheRecentTabs(value) {
+  localStorage.setItem("recentTabs", JSON.stringify(value));
+}
+
 async function init() {
   document.addEventListener("contextmenu", event => event.preventDefault());
 
@@ -166,6 +176,7 @@ async function init() {
     if (message.type === "updateRecentTabs") {
       recentTabs = message.recentTabs;
       updateHome();
+      cacheRecentTabs(recentTabs);
     } else if (message.type === "isDesktop") {
       isDesktop = message.isDesktop;
       updateHome();
@@ -175,6 +186,9 @@ async function init() {
       console.error("Got unexpected message:", message);
     }
   });
+
+  recentTabs = loadCachedRecentTabs();
+  updateHome();
 
   let info = await browser.runtime.sendMessage({
     type: "getRecentAndDesktop"
