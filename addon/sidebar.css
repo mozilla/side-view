@@ -125,14 +125,21 @@ body {
 }
 
 .default-link {
-  border: 0;
+  appearance: none;
   background-color: rgba(0, 0, 0, 0);
-  cursor: pointer;
+  border: 0;
   color: rgb(10, 141, 255);
+  cursor: pointer;
   font-size: 15px;
   margin: 6px 0;
+  padding: 0;
   text-decoration: none;
   transition: color 100ms;
+}
+
+.subtitle .default-link {
+  margin: 0;
+  padding: 0;
 }
 
 .default-link:hover,
