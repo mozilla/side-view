@@ -126,6 +126,7 @@ function element(selector) {
 }
 
 element(".feedback-button").addEventListener("click", () => {
+  window.open("https://qsurvey.mozilla.com/s3/Test-Pilot-Side-View?ref=doorhanger");
   sendEvent({
     ec: "interface",
     ea: "button-click",
