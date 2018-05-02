@@ -157,6 +157,7 @@ async function openUrl(url) {
   }).catch((error) => {
     // If the popup is not open this gives an error, but we don't care
   });
+  await browser.sideview.increaseSidebarMaxWidth();
   browser.sidebarAction.setPanel({panel: url});
 }
 
