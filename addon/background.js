@@ -267,29 +267,6 @@ browser.webRequest.onBeforeSendHeaders.addListener(function (info) {
   return {};
 }, requestFilter, ["blocking", "requestHeaders"]);
 
-// Remove WWW-Authenticate so frames sidebar won't open up password prompts
-chrome.webRequest.onHeadersReceived.addListener(function (info) {
-  // Note, if info.parentFrameId is not zero, then this request is for a sub-sub-iframe, i.e.,
-  // an iframe embedded in another iframe, and not the top-level iframe we want to rewrite
-  if (info.parentFrameId) {
-    return {};
-  }
-  let headers = info.responseHeaders;
-  let madeChanges = false;
-  for (let i = 0; i < headers.length; i++) {
-    let name = headers[i].name.toLowerCase();
-    if (name === "www-authenticate") {
-      headers.splice(i, 1);
-      i--;
-      madeChanges = true;
-    }
-  }
-  if (madeChanges) {
-    return {"responseHeaders": headers};
-  }
-  return {};
-}, requestFilter, ["blocking", "responseHeaders"]);
-
 function privateWarningOnUpdated(tabId, changeInfo, tab) {
   if (tab.incognito) {
     browser.browserAction.setBadgeText({text: "!", tabId: tab.id});
