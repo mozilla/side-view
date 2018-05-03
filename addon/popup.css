@@ -46,9 +46,8 @@ body {
 .tabs-section {
   display: flex;
   flex-direction: column;
-  flex: 1;
   max-height: 300px;
-  overflow: hidden;
+  flex: 1 1;
 }
 
 .tabs-section__title {
@@ -69,10 +68,6 @@ body {
   list-style: none;
   margin: 0;
   padding: 0;
-}
-
-#open-tabs {
-  display: flex;
 }
 
 #open-tabs-list {
@@ -188,3 +183,10 @@ supply a favicon */
   justify-content: center;
 }
 
+#recent-tabs[style$="none;"] + #open-tabs {
+  margin-top: 6px;
+}
+
+#recent-tabs[style$="none;"] + #open-tabs .separator {
+  display: none !important;
+}
