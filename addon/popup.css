@@ -20,7 +20,7 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  max-width: 400px;
+  max-width: 440px;
   min-width: 320px;
   width: 100%;
 }
@@ -137,7 +137,6 @@ supply a favicon */
 .feedback-button,
 .mobile-toggle {
   border: 0;
-  border-inline-end: 1px solid hsla(210, 4%, 10%, 0.14);
   align-items: center;
   background: hsla(0, 0%, 80%, 0.3);
   color: rgb(26, 26, 26);
@@ -149,6 +148,10 @@ supply a favicon */
   margin-bottom: 0;
   padding: 12px 4px;
   text-decoration: none;
+}
+
+.mobile-toggle {
+  border-inline-end: 1px solid hsla(210, 4%, 10%, 0.14);
 }
 
 .toggle-disabled .mobile-toggle {
