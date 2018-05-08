@@ -3,7 +3,6 @@ function element(selector) {
 }
 
 async function init() {
-  await browser.sideview.increaseSidebarMaxWidth();
   await browser.runtime.sendMessage({
     type: "sidebarOpened",
     width: Math.round(window.innerWidth / 50) * 50,
@@ -18,6 +17,9 @@ async function init() {
   element("#give-feedback").onclick = () => {
     window.open("https://qsurvey.mozilla.com/s3/Test-Pilot-Side-View?ref=sidebar");
   };
+  if (browser.sideview !== undefined) {
+    await browser.sideview.increaseSidebarMaxWidth();
+  }
 }
 
 init();
