@@ -169,6 +169,25 @@ function cacheRecentTabs(value) {
   localStorage.setItem("recentTabs", JSON.stringify(value));
 }
 
+function applyDarkTheme() {
+  document.body.style.background = "#4a4a4f";
+  document.body.style.color = "#fff";
+  document.querySelector("#panel").classList.add("dark-theme");
+}
+
+async function checkForDark() {
+  browser.management.getAll().then((extensions) => {
+    for (let extension of extensions) {
+    // The user has the default dark theme enabled
+    if (extension.id ===
+      "firefox-compact-dark@mozilla.org@personas.mozilla.org"
+      && extension.enabled) {
+        applyDarkTheme();
+      }
+    }
+  });
+}
+
 async function init() {
   document.addEventListener("contextmenu", event => event.preventDefault());
 
@@ -204,6 +223,7 @@ async function init() {
   for (let eventName of rerenderEvents) {
     browser.tabs[eventName].addListener(updateHome);
   }
+  checkForDark();
 }
 
 init();
