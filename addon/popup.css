@@ -75,20 +75,27 @@ body {
   overflow-y: auto;
 }
 
+.tab__parent {
+  display: flex;
+  width: 100%;
+  background: #fff;
+  height: 26.5px;
+}
+
 .tab {
   align-items: center;
   border: 0;
   width: 100%;
-  background: #fff;
-  display: flex;
+  background: transparent;
   font-weight: normal;
-  height: 26.5px;
   padding-inline-start: 18px;
   padding: 4px 12px;
+  display: flex;
+  overflow: hidden;
 }
 
-.tab:hover,
-.tab:focus {
+.tab__parent:hover,
+.tab__parent:focus {
   background: #ededf0;
 }
 
@@ -102,6 +109,45 @@ body {
   flex: 0 0 16px;
   height: 16px;
   margin-inline-end: 8px;
+}
+
+.tab__dismiss {
+  border: 0;
+  background: transparent;
+  margin-top: 3.25px;
+  margin-left: auto;
+  margin-right: 10px;
+  border-radius: 10%;
+  opacity: 0;
+  height: 20px;
+  padding: 2px;
+}
+
+.tab__dismiss:hover,
+.tab__dismiss:focus {
+  background: rgba(224, 224, 225, 0.9);
+}
+
+.tab__dismiss:hover,
+.tab__dismiss:focus,
+.tab:hover + .tab__dismiss,
+.tab:focus + .tab__dismiss,
+.tab__parent:hover .tab__dismiss,
+.tab__parent:focus .tab__dismiss {
+  opacity: 100;
+}
+
+.tab__dismiss::after {
+  content: url(images/close-16.svg);  /* close symbol */
+}
+
+#panel.dark-theme .tab__dismiss:hover,
+#panel.dark-theme .tab__dismiss:focus {
+  background: --dark-theme-highlight-color;
+}
+
+#panel.dark-theme .tab__dismiss::after {
+  content: url(images/close-16-light.svg);
 }
 
 /* this is a hack if, for any reason, a site does not

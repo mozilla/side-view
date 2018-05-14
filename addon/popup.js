@@ -65,16 +65,37 @@ async function updateHome(event) {
 
 let renderTabListLastRendered = {};
 
+function _onTabClick(event, tabs, url, favIconUrl, index, title, eventLabel) {
+  sendEvent({
+    ec: "interface",
+    ea: "load-url",
+    el: eventLabel,
+    forUrl: url,
+    cd4: tabs.length,
+    cd5: index
+  });
+  displayPage({
+    url,
+    favIconUrl,
+    title,
+  });
+}
+
 function renderTabList(tabs, containerSelector, eventLabel) {
   let renderedInfo = "";
   const tabList = element(containerSelector);
   const newTabList = tabList.cloneNode();
   tabs.forEach((tab, index) => {
     let li = document.createElement("li");
+    let parent = document.createElement("div");
     let image = document.createElement("span");
     let text = document.createElement("span");
+    let dismiss = document.createElement("button");
+    parent.classList.add("tab__parent");
     image.classList.add("tab__image");
     text.classList.add("tab__text");
+    dismiss.classList.add("tab__dismiss");
+    dismiss.setAttribute("aria-label", "close button");
     let title = tab.title;
     let url = tab.url;
     let favIconUrl = null;
@@ -88,24 +109,34 @@ function renderTabList(tabs, containerSelector, eventLabel) {
     anchor.classList.add("tab");
     text.textContent = title;
     renderedInfo += title + "\n";
-    anchor.addEventListener("click", (event) => {
-      sendEvent({
-        ec: "interface",
-        ea: "load-url",
-        el: eventLabel,
-        forUrl: url,
-        cd4: tabs.length,
-        cd5: index
+    anchor.addEventListener("click", (event) =>
+      _onTabClick(event, tabs, url, favIconUrl, index, title, eventLabel));
+    parent.addEventListener("click", (event) =>
+      _onTabClick(event, tabs, url, favIconUrl, index, title, eventLabel));
+    // Only add the dismiss button if its a recent tab
+    if (eventLabel === "recent-tab") {
+      dismiss.addEventListener("click", async (event) => {
+      event.stopPropagation(); // prevent the selection of tab
+       sendEvent({
+         ec: "interface",
+         ea: "dismiss-tab",
+         el: eventLabel,
+         cd4: tabs.length,
+         cd5: index
+       });
+       await browser.runtime.sendMessage({
+        type: "dismissTab",
+        index
+       });
       });
-      displayPage({
-        url,
-        favIconUrl,
-        title,
-      });
-    });
+    }
     anchor.prepend(image);
     anchor.appendChild(text);
-    li.appendChild(anchor);
+    parent.appendChild(anchor);
+    if (eventLabel === "recent-tab") {
+      parent.appendChild(dismiss);
+    }
+    li.appendChild(parent);
     newTabList.appendChild(li);
   });
   if (renderedInfo !== renderTabListLastRendered[containerSelector]) {
