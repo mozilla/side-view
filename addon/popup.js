@@ -199,6 +199,11 @@ async function init() {
     element("#private-warning").style.display = "";
   }
   updateHome();
+
+  // Listen for tab changes to update while popup is still open
+  for (let eventName of rerenderEvents) {
+    browser.tabs[eventName].addListener(updateHome);
+  }
 }
 
 init();
