@@ -305,6 +305,11 @@ async function init() {
   if (!hasSeenPrivateWarning) {
     browser.tabs.onUpdated.addListener(privateWarningOnUpdated);
   }
+  if (browser.sideview !== undefined) {
+    browser.windows.onCreated.addListener(async (window) => {
+      await browser.sideview.increaseSidebarMaxWidth();
+    });
+  }
 }
 
 init();
