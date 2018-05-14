@@ -4,6 +4,14 @@ html {
   overflow: hidden;
 }
 
+:root {
+  --dark-theme-background-color: #4a4a4f;
+  --dark-theme-highlight-color: #6d6d6f;
+  --dark-theme-superhighlight-color: hsla(0, 0%, 80%, 0.45);
+  --dark-theme-color: #fff;
+  --dark-theme-links: #45a1ff;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -181,6 +189,31 @@ supply a favicon */
   flex: 0 0 24px;
   height: 24px;
   justify-content: center;
+}
+
+/* Dark theme */
+
+#panel.dark-theme,
+#panel.dark-theme .tab {
+  background: var(--dark-theme-background-color);
+  color: var(--dark-theme-color);
+}
+
+#panel.dark-theme .tab:hover,
+#panel.dark-theme .tab:focus,
+#panel.dark-theme .separator {
+  background: var(--dark-theme-highlight-color);
+}
+
+#panel.dark-theme .feedback-button,
+#panel.dark-theme .mobile-toggle {
+  background-color: var(--dark-theme-superhighlight-color);
+  color: var(--dark-theme-color);
+}
+
+#panel.dark-theme .feedback-button:hover,
+#panel.dark-theme .mobile-toggle:hover {
+  background-color: hsla(0, 0%, 80%, 0.6);
 }
 
 #recent-tabs[style$="none;"] + #open-tabs {

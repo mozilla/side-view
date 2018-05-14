@@ -2,6 +2,23 @@ function element(selector) {
   return document.querySelector(selector);
 }
 
+function applyDarkTheme() {
+  document.querySelector(".page").classList.add("dark-theme");
+}
+
+async function checkForDark() {
+  browser.management.getAll().then((extensions) => {
+    for (let extension of extensions) {
+    // The user has the default dark theme enabled
+    if (extension.id ===
+      "firefox-compact-dark@mozilla.org@personas.mozilla.org"
+      && extension.enabled) {
+        applyDarkTheme();
+      }
+    }
+  });
+}
+
 async function init() {
   await browser.runtime.sendMessage({
     type: "sidebarOpened",
@@ -20,6 +37,11 @@ async function init() {
   if (browser.sideview !== undefined) {
     await browser.sideview.increaseSidebarMaxWidth();
   }
+
+  checkForDark();
+  browser.management.onEnabled.addListener((info) => {
+    checkForDark();
+  });
 }
 
 init();

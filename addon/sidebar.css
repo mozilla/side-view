@@ -6,6 +6,13 @@ html {
   color: rgb(12, 12, 13);
 }
 
+:root {
+  --dark-theme-background-color: #4a4a4f;
+  --dark-theme-highlight-color: #6d6d6f;
+  --dark-theme-color: #fff;
+  --dark-theme-links: #45a1ff;
+}
+
 * {
   box-sizing: border-box;
   text-align: center;
@@ -161,18 +168,21 @@ body {
 /* Dark theme */
 
 .page.dark-theme {
-  color: #fff;
-  background: #4a4a4f;
+  color: var(--dark-theme-color);
+  background: var(--dark-theme-background-color);
 }
 
 .page.dark-theme button:hover,
 .page.dark-theme button:focus,
 .page.dark-theme .graphic__shadow {
-  background: #6d6d6f;
+  background: var(--dark-theme-highlight-color);
+  background-color: transparent;
 }
 
-.page.dark-theme .default-link {
-  color: #45a1ff;
+.page.dark-theme .default-link,
+.page.dark-theme .default-link:hover,
+.page.dark-theme .default-link:focus {
+  color: var(--dark-theme-links);
 }
 
 .page.dark-theme .graphic__clouds {
