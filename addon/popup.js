@@ -151,11 +151,6 @@ element("#close-private-warning").addEventListener("click", async () => {
   await browser.runtime.sendMessage({
     type: "turnOffPrivateWarning"
   });
-  sendEvent({
-    ec: "interface",
-    ea: "button-click",
-    el: "turn-off-private-warning",
-  });
   element("#private-warning").style.display = "none";
 });
 
