@@ -182,6 +182,8 @@ browser.runtime.onMessage.addListener(async (message) => {
     if (!windowInfo.incognito) {
       addRecentTab(message);
     }
+  } else if (message.type === "dismissTab") {
+    dismissRecentTab(message.index);
   } else if (message.type === "getRecentAndDesktop") {
     let isDesktop = false;
     if (sidebarUrl) {
@@ -248,6 +250,24 @@ async function addRecentTab(tabInfo) {
     if (String(error).includes("Could not establish connection")) {
       // We're just speculatively sending messages to the popup, it might not be open,
       // and that is fine
+    } else {
+      console.error("Got updating recent tabs:", String(error), error);
+    }
+  }
+  await browser.storage.sync.set({recentTabs});
+}
+
+async function dismissRecentTab(tab_index) {
+  recentTabs.splice(tab_index, 1);
+  try {
+    await browser.runtime.sendMessage({
+      type: "updateRecentTabs",
+      recentTabs
+    });
+
+  } catch (error) {
+    if (String(error).includes("Could not establish connection")) {
+      // popup speculation, as in addRecentTab()
     } else {
       console.error("Got updating recent tabs:", String(error), error);
     }
