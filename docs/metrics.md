@@ -159,16 +159,6 @@ cd2,
 cd3
 ```
 
-##### When the user dismisses the private browsing warning
-```
-ec: interface
-ea: button-click
-el: turn-off-private-warning
-cd1,
-cd2,
-cd3
-```
-
 #### `Content`
 
 ##### When the home page loads for whatever reason
