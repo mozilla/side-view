@@ -32,7 +32,7 @@ async function init() {
     // window.open("https://testpilot.firefox.com");
   };
   element("#give-feedback").onclick = () => {
-    window.open("https://qsurvey.mozilla.com/s3/Test-Pilot-Side-View?ref=sidebar");
+    window.open("https://qsurvey.mozilla.com/s3/side-view?ref=sidebar");
   };
   if (browser.sideview !== undefined) {
     await browser.sideview.increaseSidebarMaxWidth();
