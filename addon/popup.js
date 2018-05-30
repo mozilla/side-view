@@ -96,6 +96,7 @@ function renderTabList(tabs, containerSelector, eventLabel) {
     text.classList.add("tab__text");
     dismiss.classList.add("tab__dismiss");
     dismiss.setAttribute("aria-label", "close button");
+    dismiss.setAttribute("title", "Remove Tab from Recent List");
     let title = tab.title;
     let url = tab.url;
     let favIconUrl = null;
