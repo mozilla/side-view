@@ -27,13 +27,15 @@ async function init() {
   element("#visit-test-pilot").onclick = () => {
     window.open("https://testpilot.firefox.com");
   };
+
   element("#watch-tutorial").onclick = () => {
-    // TODO insert tutorial link here
-    // window.open("https://testpilot.firefox.com");
+    window.open("https://youtu.be/9Rgk1CegW2E");
   };
+
   element("#give-feedback").onclick = () => {
     window.open("https://qsurvey.mozilla.com/s3/side-view?ref=sidebar");
   };
+
   if (browser.sideview !== undefined) {
     await browser.sideview.increaseSidebarMaxWidth();
   }
