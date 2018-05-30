@@ -149,15 +149,6 @@ body {
   content: url(images/close-16.svg);  /* close symbol */
 }
 
-#panel.dark-theme .tab__dismiss:hover,
-#panel.dark-theme .tab__dismiss:focus {
-  background: --dark-theme-highlight-color;
-}
-
-#panel.dark-theme .tab__dismiss::after {
-  content: url(images/close-16-light.svg);
-}
-
 /* this is a hack if, for any reason, a site does not
 supply a favicon */
 
@@ -240,15 +231,28 @@ supply a favicon */
 /* Dark theme */
 
 #panel.dark-theme,
-#panel.dark-theme .tab {
-  background: var(--dark-theme-background-color);
+#panel.dark-theme .tab,
+#panel.dark-theme .tab__parent,
+#panel.dark-theme .tab__dismiss {
+  background-color: var(--dark-theme-background-color);
   color: var(--dark-theme-color);
 }
 
-#panel.dark-theme .tab:hover,
-#panel.dark-theme .tab:focus,
+#panel.dark-theme .tab__parent:hover,
+#panel.dark-theme .tab__parent:focus,
+#panel.dark-theme .tab__parent:hover > *,
+#panel.dark-theme .tab__parent:focus > *,
 #panel.dark-theme .separator {
-  background: var(--dark-theme-highlight-color);
+  background-color: var(--dark-theme-highlight-color);
+}
+
+#panel.dark-theme .tab__dismiss:hover,
+#panel.dark-theme .tab__dismiss:focus {
+  background-color: var(--dark-theme-background-color);
+}
+
+#panel.dark-theme .tab__dismiss::after {
+  content: url(images/close-16-light.svg);
 }
 
 #panel.dark-theme .feedback-button,
