@@ -29,7 +29,7 @@ async function init() {
   };
 
   element("#watch-tutorial").onclick = () => {
-    window.open("https://youtu.be/9Rgk1CegW2E");
+    window.open("https://youtu.be/no6D_B4wgo8");
   };
 
   element("#give-feedback").onclick = () => {
