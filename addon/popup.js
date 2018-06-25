@@ -168,6 +168,7 @@ element(".feedback-button").addEventListener("click", () => {
 });
 
 element(".mobile-toggle").addEventListener("click", async () => {
+  await browser.sidebarAction.open();
   await browser.runtime.sendMessage({
     type: "toggleDesktop"
   });
