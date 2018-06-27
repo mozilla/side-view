@@ -41,6 +41,27 @@ ni: true
 
 Note `ni` (not-interactive) will keep these events from being grouped under user activity.
 
+##### When the sidebar experiment succeeds in loading
+
+Called at startup when the experiment loads
+
+```
+ec: startup
+ea: loaded-width
+ni: true
+```
+
+##### When the sidebar experiment fails to load
+
+When the experiment fails to load. The experiment may fail to be present (some loading error), or may have an exception while running
+
+```
+ec: startup
+ea: failed-width
+el: not-present or exception
+ni: true
+```
+
 ##### When a link cannot be added to Recent Tabs
 
 ```

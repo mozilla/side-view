@@ -161,7 +161,7 @@ async function openUrl(url) {
     // If the popup is not open this gives an error, but we don't care
   });
   if (browser.sideview !== undefined) {
-    await browser.sideview.increaseSidebarMaxWidth();
+    await increaseSidebarMaxWidth();
   }
   browser.sidebarAction.setPanel({panel: url});
 }
@@ -308,6 +308,39 @@ async function turnOffPrivateWarning() {
   await browser.storage.sync.set({hasSeenPrivateWarning});
 }
 
+let hasSentWidthEvent = false;
+
+async function increaseSidebarMaxWidth() {
+  if (browser.sideview !== undefined) {
+    try {
+      await browser.sideview.increaseSidebarMaxWidth();
+      if (!hasSentWidthEvent) {
+        hasSentWidthEvent = true;
+        sendEvent({
+          ec: "startup",
+          ea: "loaded-width",
+          ni: true,
+        });
+      }
+    } catch (e) {
+      sendEvent({
+        ec: "startup",
+        ea: "failed-width",
+        el: "exception",
+        ni: true,
+      });
+    }
+  } else if (!hasSentWidthEvent) {
+    hasSentWidthEvent = true;
+    sendEvent({
+      ec: "startup",
+      ea: "failed-widh",
+      el: "not-present",
+      ni: true,
+    });
+  }
+}
+
 async function init() {
   const result = await browser.storage.sync.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning"]);
   if (!result.desktopHostnames) {
@@ -327,7 +360,7 @@ async function init() {
   }
   if (browser.sideview !== undefined) {
     browser.windows.onCreated.addListener(async (window) => {
-      await browser.sideview.increaseSidebarMaxWidth();
+      await increaseSidebarMaxWidth();
     });
   }
 }
