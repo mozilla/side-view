@@ -12,11 +12,23 @@
     "applications": {
       "gecko": {
         "id": {{#SHIELD}}"side-view@shield.mozilla.org"{{/SHIELD}}{{^SHIELD}}"side-view@mozilla.org"{{/SHIELD}},
-        "strict_min_version": "57.0a1",
-        "update_url": "https://testpilot.firefox.com/files/side-view@mozilla.org/updates.json"
+        {{#SHIELD}}
+        "update_url": "https://testpilot.firefox.com/files/side-view@mozilla.org/updates.json",
+        {{/SHIELD}}
+        "strict_min_version": "57.0a1"
       }
     },
     "experiment_apis": {
+      {{#SHIELD}}
+      "study": {
+        "schema": "../experiment/study/schema.json",
+        "parent": {
+          "scopes": ["addon_parent"],
+          "script": "../experiment/study/api.js",
+          "paths": [["study", "studyDebug"]]
+        }
+      },
+      {{/SHIELD}}
       "sideview": {
         "schema": "../experiment/schema.json",
         "parent": {
@@ -29,7 +41,9 @@
     "background": {
       "scripts": [
         "build/buildSettings.js",
+        {{^SHIELD}}
         "build/testpilot-ga.js",
+        {{/SHIELD}}
         "background.js"
       ]
     },
