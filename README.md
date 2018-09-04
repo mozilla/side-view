@@ -6,6 +6,8 @@ An experiment with opening mobile views of pages in the sidebar
 
 Use `npm install`, then `npm start`.
 
+To use the build intended for a [Shield Study](https://wiki.mozilla.org/Firefox/Shield/Shield_Studies) use `SHIELD=1 npm run build`
+
 ## Installing manually
 
 Check out the repository. Go to `about:debugging` in Firefox, and select **Load Temporary Add-on**. Select a file in the `addon/` directory.

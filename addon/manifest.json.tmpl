@@ -11,7 +11,7 @@
     "homepage_url": "{{{homepage}}}",
     "applications": {
       "gecko": {
-        "id": "side-view@mozilla.org",
+        "id": {{#SHIELD}}"side-view@shield.mozilla.org"{{/SHIELD}}{{^SHIELD}}"side-view@mozilla.org"{{/SHIELD}},
         "strict_min_version": "57.0a1",
         "update_url": "https://testpilot.firefox.com/files/side-view@mozilla.org/updates.json"
       }
