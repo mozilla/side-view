@@ -72,7 +72,7 @@ function _onTabClick(event, tabs, url, favIconUrl, index, title, eventLabel) {
     el: eventLabel,
     forUrl: url,
     cd4: tabs.length,
-    cd5: index
+    cd5: index,
   });
   displayPage({
     url,
@@ -123,11 +123,11 @@ function renderTabList(tabs, containerSelector, eventLabel) {
          ea: "dismiss-tab",
          el: eventLabel,
          cd4: tabs.length,
-         cd5: index
+         cd5: index,
        });
        await browser.runtime.sendMessage({
         type: "dismissTab",
-        index
+        index,
        });
       });
     }
@@ -170,7 +170,7 @@ element(".feedback-button").addEventListener("click", () => {
 element(".mobile-toggle").addEventListener("click", async () => {
   await browser.sidebarAction.open();
   await browser.runtime.sendMessage({
-    type: "toggleDesktop"
+    type: "toggleDesktop",
   });
   sendEvent({
     ec: "interface",
@@ -182,7 +182,7 @@ element(".mobile-toggle").addEventListener("click", async () => {
 
 element("#close-private-warning").addEventListener("click", async () => {
   await browser.runtime.sendMessage({
-    type: "turnOffPrivateWarning"
+    type: "turnOffPrivateWarning",
   });
   element("#private-warning").style.display = "none";
 });
@@ -238,7 +238,7 @@ async function init() {
   updateHome();
 
   let info = await browser.runtime.sendMessage({
-    type: "getRecentAndDesktop"
+    type: "getRecentAndDesktop",
   });
   recentTabs = info.recentTabs;
   isDesktop = info.isDesktop;
