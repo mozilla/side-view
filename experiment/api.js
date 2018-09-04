@@ -1,7 +1,5 @@
 /* global ExtensionAPI:false */
 
-const { classes: Cc, interfaces: Ci, utils: Cu } = Components;
-
 this.sideview = class API extends ExtensionAPI {
   getAPI(context) {
     return {
@@ -14,8 +12,8 @@ this.sideview = class API extends ExtensionAPI {
           const sidebar = browser.document.getElementById("sidebar");
           sidebar.style.maxWidth = "72em";
           return true;
-        }
-      }
+        },
+      },
     };
   }
 };

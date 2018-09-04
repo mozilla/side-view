@@ -69,14 +69,14 @@ async function countTabs() {
 sendEvent({
   ec: "startup",
   ea: "startup",
-  ni: true
+  ni: true,
 });
 
 browser.contextMenus.create({
   id: "open-in-sidebar",
   title: "Open in sidebar",
   contexts: ["page", "tab", "bookmark"],
-  documentUrlPatterns: ["<all_urls>"]
+  documentUrlPatterns: ["<all_urls>"],
 });
 
 browser.contextMenus.create({
@@ -84,7 +84,7 @@ browser.contextMenus.create({
   title: "Open link in sidebar",
   // FIXME: could add "bookmark", but have to fetch by info.bookmarkId
   contexts: ["link"],
-  documentUrlPatterns: ["<all_urls>"]
+  documentUrlPatterns: ["<all_urls>"],
 });
 
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
@@ -244,7 +244,7 @@ async function addRecentTab(tabInfo) {
   try {
     await browser.runtime.sendMessage({
       type: "updateRecentTabs",
-      recentTabs
+      recentTabs,
     });
   } catch (error) {
     if (String(error).includes("Could not establish connection")) {
@@ -262,7 +262,7 @@ async function dismissRecentTab(tab_index) {
   try {
     await browser.runtime.sendMessage({
       type: "updateRecentTabs",
-      recentTabs
+      recentTabs,
     });
 
   } catch (error) {
