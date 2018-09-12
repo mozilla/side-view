@@ -22,22 +22,30 @@ const DEFAULT_DESKTOP_VERSION = 1;
 
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
+const isShield = manifest.applications.gecko.id.endsWith("shield.mozilla.org");
 let sidebarUrl;
 let sidebarWidth;
 let hasSeenPrivateWarning = false;
 
-const ga = new TestPilotGA({
-  an: "side-view",
-  aid: manifest.applications.gecko.id,
-  aiid: "testpilot",
-  av: manifest.version,
-  // cd19 could also be dev or stage:
-  cd19: buildSettings.NODE_ENV === "prod" ? "production" : "local",
-  ds: "addon",
-  tid: buildSettings.NODE_ENV === "prod" ? "UA-77033033-7" : "",
-});
+let ga;
+if (!isShield) {
+  ga = new TestPilotGA({
+    an: "side-view",
+    aid: manifest.applications.gecko.id,
+    aiid: "testpilot",
+    av: manifest.version,
+    // cd19 could also be dev or stage:
+    cd19: buildSettings.NODE_ENV === "prod" ? "production" : "local",
+    ds: "addon",
+    tid: buildSettings.NODE_ENV === "prod" ? "UA-77033033-7" : "",
+  });
+}
 
 async function sendEvent(args) {
+  if (isShield) {
+    console.info("Aborting event for Shield");
+    return;
+  }
   if (args.forUrl || sidebarUrl) {
     let hostname = (new URL(args.forUrl || sidebarUrl)).hostname;
     delete args.forUrl;
