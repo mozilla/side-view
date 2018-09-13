@@ -8,6 +8,8 @@ Use `npm install`, then `npm start`.
 
 To use the build intended for a [Shield Study](https://wiki.mozilla.org/Firefox/Shield/Shield_Studies) use `SHIELD=1 npm run build`
 
+To use the build intended for addons.mozilla.org (as opposed to Test Pilot) use `npm run build-amo`
+
 ## Installing manually
 
 Check out the repository. Go to `about:debugging` in Firefox, and select **Load Temporary Add-on**. Select a file in the `addon/` directory.

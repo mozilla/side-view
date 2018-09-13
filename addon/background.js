@@ -23,12 +23,13 @@ const DEFAULT_DESKTOP_VERSION = 1;
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
 const isShield = manifest.applications.gecko.id.endsWith("shield.mozilla.org");
+const isAmo = buildSettings.isAmo;
 let sidebarUrl;
 let sidebarWidth;
 let hasSeenPrivateWarning = false;
 
 let ga;
-if (!isShield) {
+if (!isShield && !isAmo) {
   ga = new TestPilotGA({
     an: "side-view",
     aid: manifest.applications.gecko.id,
@@ -42,6 +43,9 @@ if (!isShield) {
 }
 
 async function sendEvent(args) {
+  if (isAmo) {
+    return;
+  }
   if (isShield) {
     console.info("Aborting event for Shield");
     return;
