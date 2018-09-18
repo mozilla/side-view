@@ -349,8 +349,23 @@ async function increaseSidebarMaxWidth() {
   }
 }
 
+function showOnboardingBadge() {
+  browser.browserAction.setBadgeText({text: "New"});
+  browser.browserAction.setBadgeBackgroundColor({color: "#0a84ff"});
+  function onBrowserActionClick() {
+    browser.sidebarAction.open();
+    browser.browserAction.onClicked.removeListener(onBrowserActionClick);
+    browser.browserAction.setBadgeText({text: ""});
+    browser.storage.sync.set({hasBeenOnboarded: true});
+    browser.browserAction.setPopup({popup: "popup.html"});
+  }
+  // This disables the default popup action and lets us intercept the clicks:
+  browser.browserAction.setPopup({popup: ""});
+  browser.browserAction.onClicked.addListener(onBrowserActionClick);
+}
+
 async function init() {
-  const result = await browser.storage.sync.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning"]);
+  const result = await browser.storage.sync.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning", "hasBeenOnboarded"]);
   if (!result.desktopHostnames) {
     desktopHostnames = {};
   } else {
@@ -370,6 +385,9 @@ async function init() {
     browser.windows.onCreated.addListener(async (window) => {
       await increaseSidebarMaxWidth();
     });
+  }
+  if (!result.hasBeenOnboarded && isShield) {
+    showOnboardingBadge();
   }
 }
 
