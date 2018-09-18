@@ -240,7 +240,7 @@ async function toggleDesktop() {
   // back to the previous URL:
   browser.sidebarAction.setPanel({panel: "about:blank"});
   openUrl(sidebarUrl);
-  await browser.storage.sync.set({desktopHostnames, defaultDesktopVersion: DEFAULT_DESKTOP_VERSION});
+  await browser.storage.local.set({desktopHostnames, defaultDesktopVersion: DEFAULT_DESKTOP_VERSION});
 }
 
 let recentTabs = [];
@@ -262,7 +262,7 @@ async function addRecentTab(tabInfo) {
       console.error("Got updating recent tabs:", String(error), error);
     }
   }
-  await browser.storage.sync.set({recentTabs});
+  await browser.storage.local.set({recentTabs});
 }
 
 async function dismissRecentTab(tab_index) {
@@ -280,7 +280,7 @@ async function dismissRecentTab(tab_index) {
       console.error("Got updating recent tabs:", String(error), error);
     }
   }
-  await browser.storage.sync.set({recentTabs});
+  await browser.storage.local.set({recentTabs});
 }
 
 // Add a mobile header to outgoing requests
@@ -313,7 +313,7 @@ async function turnOffPrivateWarning() {
   for (let tab of win.tabs) {
     browser.browserAction.setBadgeText({text: null, tabId: tab.id});
   }
-  await browser.storage.sync.set({hasSeenPrivateWarning});
+  await browser.storage.local.set({hasSeenPrivateWarning});
 }
 
 let hasSentWidthEvent = false;
@@ -350,7 +350,7 @@ async function increaseSidebarMaxWidth() {
 }
 
 async function init() {
-  const result = await browser.storage.sync.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning"]);
+  const result = await browser.storage.local.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning"]);
   if (!result.desktopHostnames) {
     desktopHostnames = {};
   } else {
@@ -372,5 +372,11 @@ async function init() {
     });
   }
 }
+
+// For somewhat unknown reasons we've caused sync probems for some users (probably because of too much data)
+// We've moved from browser.storage.sync to browser.storage.local to fix this.
+// BUT, existing users may still have too much data. This should clear it for them.
+// See also: https://github.com/mozilla/side-view/issues/332 and https://github.com/mozilla/side-view/issues/328
+browser.storage.sync.clear();
 
 init();
