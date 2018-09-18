@@ -1,41 +1,30 @@
-<img width="840px" height="auto" src="./acceptance-wires.png" alt="Splitting basics">
+# Shield Acceptance
 
-### In General
-- [ ] It should generally match Photon styles.
-- [ ] It should have a way for users to provide feedback without leaving the experiment. See #6
+[Shield Study Guide](https://docs.google.com/document/d/1KDJPrWmSclap7HSqjDoN9cGud4WzB9i8wxlguYPpGkg/edit)
 
-### Context Clicks
-- [x] It should register a _link_ context menu item for opening sites in the sidebar. See #3
-- [x] It should register a _page_ and _tab_ context menu item for opening sites in the sidebar. See #4
-- [ ] It should register a _bookmarks_ context menu item for opening sites from the bookmark toolbar.
-- [ ] Both context menu buttons should include the extension icon.
+## General
+- [ ] It should more or less match photon styles
+- [ ] It should fit with both default and dark Firefox themes
+- [ ] It should remove links to the Test Pilot survey
+- [ ] It should have a unique add-on ID
+- [ ] It should remove the webExtension experiment that makes the sidebar wider
 
-### SV Homepage
-- [ ] It should have a homepage
-- [ ] It should have a feedback button that links to an external survey with the query params `ver={add-on-version}`, `ref=sidebar` and `rel={firefox-release}`. See #6
-- [ ] It should link to onboarding content.
-- [ ] It should include the extension icon in the header.
+## Metrics
+- [ ] It should not send any metrics reporting to GA
+- [ ] All not send any metrics to Telemetry except those defined in the API
+- [ ] It should instrument a new `panel_visible_today` metric that is reported daily as a boolean based on whether the user had any web content visible in Side View on a given day
+- [ ] It should instrument a new `total_daily_uri_to_sv` metric which counts the number of new URIs sent to Side View each day. Note: even if this is 0 for a given day, `panel_visible_today` may be true if the user has SV open and set to show a URL from a previous day.
 
-### SV Panel
-- [ ] It should show a list of current http(s) tabs.
-- [ ] It should show a list of recently SVed tabs.
-- [ ] If !recently SVed tabs, only show the current tab section.
-- [ ] It should show a feedback button with the query params `ver={add-on-version}`, `ref=panel` and `rel={firefox-release}`.
-- [ ] The browser action icon should accept a fill value of `context-fill`
-- [ ] It should let the user toggle between mobile and desktop UI.
-- [ ] It should remember whether a site has been toggled to/from desktop before and render accordingly.
+## Onboarding
+- [ ] It should show onboarding to outline the basic usage of the feature (outline copy can be borrowed from [here](https://testpilot.firefox.com/experiments/side-view))
+- [ ] Users in `elective_onboarding` branch should only see onboarding on their first interaction with Side View
+- [ ] Users in the `default_onboarding` branch should see onboarding when the Side View shield study is installed
+- [ ] For users in the `elective_onboarding` branch, If the user enters onboarding through context clicking or the pageAction menu, they should be prompted to continue to the original URL at the end of onboarding
 
-### Private Browsing Considerations
-- [ ] Recent tabs should not be added or updated in Private Browsing Mode.
-- [ ] When a user leaves Private Browsing Mode, the contents of the Panel should be flushed.
+## Survey
+- [ ] It should include the following query params:
+  - [ ] cohort= 1 - 5 depending on segmentation defined above
+  - [ ] panel_days= SUM(panel_visible_today) [optional, depends on cohort]
+  - [ ] uri_count= SUM(total_daily_uri_to_sv) [optional, depends on cohort]
+- [ ] It should offer users where url_count >= 1 a link to Side View on AMO so they can continue to use the feature
 
-### Global
-- [ ] It should extend the max-width of the sidebar to up to 50% of the total browser window. See #10
-
-### A11y
-See #27 for this list
-- [ ] All buttons and links should have visible focus states
-- [ ] All buttons and links should be accessible via keyed entry (tab selection)
-- [ ] All form elements should include appropriate label attributes
-- [ ] All grouped buttons should be nested in a <fieldset> and described with a legend
-- [ ] All UI should be verified to use A11y friendly contrast ratios
