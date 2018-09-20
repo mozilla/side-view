@@ -18,6 +18,7 @@
         "strict_min_version": "57.0a1"
       }
     },
+    {{^IS_AMO}}
     "experiment_apis": {
       {{#SHIELD}}
       "study": {
@@ -38,12 +39,13 @@
         }
       }
     },
+    {{/IS_AMO}}
     "background": {
       "scripts": [
         "build/buildSettings.js",
-        {{^SHIELD}}
+        {{^SHIELD_OR_AMO}}
         "build/testpilot-ga.js",
-        {{/SHIELD}}
+        {{/SHIELD_OR_AMO}}
         "background.js"
       ]
     },
@@ -54,6 +56,9 @@
       "browser_style": true
     },
     "sidebar_action": {
+      {{#SHIELD}}
+      "open_at_install": false,
+      {{/SHIELD}}
       "default_icon": "side-view.svg",
       "default_title": "Side View",
       "default_panel": "sidebar.html",

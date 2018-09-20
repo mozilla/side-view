@@ -23,12 +23,13 @@ const DEFAULT_DESKTOP_VERSION = 1;
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
 const isShield = manifest.applications.gecko.id.endsWith("shield.mozilla.org");
+const isAmo = buildSettings.isAmo;
 let sidebarUrl;
 let sidebarWidth;
 let hasSeenPrivateWarning = false;
 
 let ga;
-if (!isShield) {
+if (!isShield && !isAmo) {
   ga = new TestPilotGA({
     an: "side-view",
     aid: manifest.applications.gecko.id,
@@ -42,6 +43,9 @@ if (!isShield) {
 }
 
 async function sendEvent(args) {
+  if (isAmo) {
+    return;
+  }
   if (isShield) {
     console.info("Aborting event for Shield");
     return;
@@ -349,8 +353,23 @@ async function increaseSidebarMaxWidth() {
   }
 }
 
+function showOnboardingBadge() {
+  browser.browserAction.setBadgeText({text: "New"});
+  browser.browserAction.setBadgeBackgroundColor({color: "#0a84ff"});
+  function onBrowserActionClick() {
+    browser.sidebarAction.open();
+    browser.browserAction.onClicked.removeListener(onBrowserActionClick);
+    browser.browserAction.setBadgeText({text: ""});
+    browser.storage.local.set({hasBeenOnboarded: true});
+    browser.browserAction.setPopup({popup: "popup.html"});
+  }
+  // This disables the default popup action and lets us intercept the clicks:
+  browser.browserAction.setPopup({popup: ""});
+  browser.browserAction.onClicked.addListener(onBrowserActionClick);
+}
+
 async function init() {
-  const result = await browser.storage.local.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning"]);
+  const result = await browser.storage.local.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning", "hasBeenOnboarded"]);
   if (!result.desktopHostnames) {
     desktopHostnames = {};
   } else {
@@ -370,6 +389,9 @@ async function init() {
     browser.windows.onCreated.addListener(async (window) => {
       await increaseSidebarMaxWidth();
     });
+  }
+  if (!result.hasBeenOnboarded && isShield) {
+    showOnboardingBadge();
   }
 }
 
