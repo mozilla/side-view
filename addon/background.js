@@ -244,7 +244,7 @@ async function toggleDesktop() {
   // back to the previous URL:
   browser.sidebarAction.setPanel({panel: "about:blank"});
   openUrl(sidebarUrl);
-  await browser.storage.sync.set({desktopHostnames, defaultDesktopVersion: DEFAULT_DESKTOP_VERSION});
+  await browser.storage.local.set({desktopHostnames, defaultDesktopVersion: DEFAULT_DESKTOP_VERSION});
 }
 
 let recentTabs = [];
@@ -266,7 +266,7 @@ async function addRecentTab(tabInfo) {
       console.error("Got updating recent tabs:", String(error), error);
     }
   }
-  await browser.storage.sync.set({recentTabs});
+  await browser.storage.local.set({recentTabs});
 }
 
 async function dismissRecentTab(tab_index) {
@@ -284,7 +284,7 @@ async function dismissRecentTab(tab_index) {
       console.error("Got updating recent tabs:", String(error), error);
     }
   }
-  await browser.storage.sync.set({recentTabs});
+  await browser.storage.local.set({recentTabs});
 }
 
 // Add a mobile header to outgoing requests
@@ -317,7 +317,7 @@ async function turnOffPrivateWarning() {
   for (let tab of win.tabs) {
     browser.browserAction.setBadgeText({text: null, tabId: tab.id});
   }
-  await browser.storage.sync.set({hasSeenPrivateWarning});
+  await browser.storage.local.set({hasSeenPrivateWarning});
 }
 
 let hasSentWidthEvent = false;
@@ -360,7 +360,7 @@ function showOnboardingBadge() {
     browser.sidebarAction.open();
     browser.browserAction.onClicked.removeListener(onBrowserActionClick);
     browser.browserAction.setBadgeText({text: ""});
-    browser.storage.sync.set({hasBeenOnboarded: true});
+    browser.storage.local.set({hasBeenOnboarded: true});
     browser.browserAction.setPopup({popup: "popup.html"});
   }
   // This disables the default popup action and lets us intercept the clicks:
@@ -369,7 +369,7 @@ function showOnboardingBadge() {
 }
 
 async function init() {
-  const result = await browser.storage.sync.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning", "hasBeenOnboarded"]);
+  const result = await browser.storage.local.get(["desktopHostnames", "defaultDesktopVersion", "recentTabs", "hasSeenPrivateWarning", "hasBeenOnboarded"]);
   if (!result.desktopHostnames) {
     desktopHostnames = {};
   } else {
@@ -394,5 +394,11 @@ async function init() {
     showOnboardingBadge();
   }
 }
+
+// For somewhat unknown reasons we've caused sync probems for some users (probably because of too much data)
+// We've moved from browser.storage.sync to browser.storage.local to fix this.
+// BUT, existing users may still have too much data. This should clear it for them.
+// See also: https://github.com/mozilla/side-view/issues/332 and https://github.com/mozilla/side-view/issues/328
+browser.storage.sync.clear();
 
 init();
