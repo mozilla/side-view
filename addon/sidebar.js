@@ -1,3 +1,5 @@
+/* globals buildSettings */
+
 function element(selector) {
   return document.querySelector(selector);
 }
@@ -20,10 +22,14 @@ async function checkForDark() {
 }
 
 async function init() {
-  await browser.runtime.sendMessage({
-    type: "sidebarOpened",
-    width: Math.round(window.innerWidth / 50) * 50,
-  });
+  try {
+    await browser.runtime.sendMessage({
+      type: "sidebarOpened",
+      width: Math.round(window.innerWidth / 50) * 50,
+    });
+  } catch (e) {
+    console.warn("Error contacting background page from Side View sidebar:", String(e));
+  }
   element("#visit-test-pilot").onclick = () => {
     window.open("https://testpilot.firefox.com");
   };
@@ -32,9 +38,13 @@ async function init() {
     window.open("https://youtu.be/no6D_B4wgo8");
   };
 
-  element("#give-feedback").onclick = () => {
-    window.open("https://qsurvey.mozilla.com/s3/side-view?ref=sidebar");
-  };
+  if (buildSettings.isAmo) {
+    element("#give-feedback").style.display = "none";
+  } else {
+    element("#give-feedback").onclick = () => {
+      window.open("https://qsurvey.mozilla.com/s3/side-view?ref=sidebar");
+    };
+  }
 
   if (browser.sideview !== undefined) {
     await browser.sideview.increaseSidebarMaxWidth();

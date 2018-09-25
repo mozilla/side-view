@@ -1,3 +1,4 @@
+/* globals buildSettings */
 let lastDisplayedUrl;
 let isDesktop = false;
 let recentTabs = [];
@@ -157,15 +158,19 @@ function element(selector) {
   return document.querySelector(selector);
 }
 
-element(".feedback-button").addEventListener("click", () => {
-  window.open("https://qsurvey.mozilla.com/s3/side-view?ref=doorhanger");
-  sendEvent({
-    ec: "interface",
-    ea: "button-click",
-    el: "feedback",
-    forUrl: lastDisplayedUrl,
+if (buildSettings.isAmo) {
+  element(".feedback-button").style.display = "none";
+} else {
+  element(".feedback-button").addEventListener("click", () => {
+    window.open("https://qsurvey.mozilla.com/s3/side-view?ref=doorhanger");
+    sendEvent({
+      ec: "interface",
+      ea: "button-click",
+      el: "feedback",
+      forUrl: lastDisplayedUrl,
+    });
   });
-});
+}
 
 element(".mobile-toggle").addEventListener("click", async () => {
   await browser.sidebarAction.open();
