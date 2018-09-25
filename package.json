@@ -45,6 +45,7 @@
     "build-amo:buildSettings": "IS_AMO=1 npm-run-all build:buildSettings build:manifest",
     "build-amo:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl' --ignore-files 'build/testpilot-ga.js'",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
+    "package-amo": "npm run build-amo && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
     "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console --keep-profile-changes -f nightly",
     "test": "npm run lint"
   }
