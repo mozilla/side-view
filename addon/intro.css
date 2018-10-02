@@ -1,13 +1,100 @@
+:root {
+  --blue-40: #45a1ff;
+  --blue-50: #0a84ff;
+  --blue-50-a30: rgba(10, 132, 255, 0.3);
+  --blue-60: #0060df;
+  --blue-70: #003eaa;
+  --blue-80: #002275;
+  --blue-90: #000f40;
+}
+
+#container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  font: message-box;
+  font-size: 16px;
+}
+
 .slide {
-  height: 200px;
-  width: 300px;
-  border: 2px dotted #f00;
+  width: 480px;
+  flex-direction: column;
+  align-items: center;
+}
+
+.slide-image {
+  width: 480px;
+  flex: 0 0 270px;
+  box-shadow: 0 1px 0 rgba(12, 12, 13, 0.1);
+}
+
+.slide p {
+  line-height: 1.5em;
+  margin: 0;
+  padding: 0 32px;
+  text-align: center;
+  height: 84px;
+  display: flex;
+  align-items: center;
+}
+
+.slide p span {
+  text-align: center;
+  padding: 0 48px;
+}
+
+.slide-displayed {
+  display: flex;
 }
 
 .slide-hidden {
   display: none;
 }
 
-button.selected {
-  font-weight: bold;
+#slide-controls {
+  align-items: center;
+  padding: 0 16px 16px;
+  display: grid;
+  grid-template-columns: 120px 1fr 120px;
+  justify-content: center;
+}
+
+button {
+  align-items: center;
+  background: #f2f2f2;
+  border-radius: 2px;
+  border: 0;
+  display: flex;
+  font-size: 14px;
+  height: 32px;
+  justify-content: center;
+  padding: 5px;
+  flex: 1;
+}
+
+.button-hidden {
+  display: none;
+}
+
+.button-invisible {
+  visibility: hidden;
+}
+
+#next,
+#done {
+  grid-column: 3 / -1;
+}
+
+.button-primary {
+  background: var(--blue-50);
+  color: white;
+}
+
+.button-primary:hover,
+.button-primary:focus {
+  background: var(--blue-60);
+}
+
+.button-primary:active {
+  background: var(--blue-70);
 }
