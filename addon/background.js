@@ -357,7 +357,8 @@ function showOnboardingBadge() {
   browser.browserAction.setBadgeText({text: "New"});
   browser.browserAction.setBadgeBackgroundColor({color: "#0a84ff"});
   function onBrowserActionClick() {
-    browser.sidebarAction.open();
+    browser.browserAction.setPopup({popup: "intro.html"});
+    browser.browserAction.openPopup();
     browser.browserAction.onClicked.removeListener(onBrowserActionClick);
     browser.browserAction.setBadgeText({text: ""});
     browser.storage.local.set({hasBeenOnboarded: true});
@@ -390,7 +391,7 @@ async function init() {
       await increaseSidebarMaxWidth();
     });
   }
-  if (!result.hasBeenOnboarded && isShield) {
+  if (!result.hasBeenOnboarded) {
     showOnboardingBadge();
   }
 }
