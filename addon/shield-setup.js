@@ -50,8 +50,7 @@ this.shieldSetup = (function () {
           /** standard endings */
           "user-disable": {
             baseUrls: [
-              // FIXME: put in correct URL:
-              "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=user-disable",
+              "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=user-disable",
             ],
           },
           ineligible: {
@@ -59,8 +58,7 @@ this.shieldSetup = (function () {
           },
           expired: {
             baseUrls: [
-              // FIXME: put in correct URL
-              "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=expired",
+              "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=expired",
             ],
           },
           /** Study specific endings */
@@ -68,7 +66,7 @@ this.shieldSetup = (function () {
             baseUrls: [
               // FIXME: do we want this?
               // If we do, we have to use browser.study.endStudy("user-used-the-feature")
-              "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=user-used-the-feature",
+              "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=user-used-the-feature",
             ],
             category: "ended-positive",
           },
