@@ -44,8 +44,10 @@
     "build-amo": "npm-run-all build-amo:*",
     "build-amo:buildSettings": "IS_AMO=1 npm-run-all build:buildSettings build:manifest",
     "build-amo:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl' --ignore-files 'build/testpilot-ga.js'",
+    "build-null": "copyStudyUtils ./null-addon/addon/experiment/ && web-ext build --source-dir=null-addon/addon/ --overwrite-dest",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
-    "package-amo": "npm run build-amo && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
+    "package-amo": "npm run build-amo && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon-amo.xpi",
+    "package-null": "npm run build-null && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon-null.xpi",
     "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console --keep-profile-changes -f nightly --pref=shieldStudy.logLevel=All",
     "test": "npm run lint"
   }
