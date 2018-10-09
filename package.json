@@ -37,15 +37,15 @@
     "lint:styles": "stylelint ./addon/*.css",
     "build": "npm-run-all build:*",
     "build:ga": "mkdir -p addon/build && cp $(node -e 'console.log(require.resolve(\"testpilot-ga\"))') addon/build/testpilot-ga.js",
-    "build:testutils": "if [[ -n \"$SHIELD\" ]] ; then copyStudyUtils ./experiment/ ; else rm -rf ./experiment/study/ ; fi",
+    "build:testutils": "if [[ -n \"$SHIELD\" ]] ; then copyStudyUtils ./addon/experiment/ ; else rm -rf ./addon/experiment/study/ ; fi",
     "build:manifest": "node -e 'let input = JSON.parse(fs.readFileSync(\"package.json\")); input.version = input.version.slice(0, -1) + Math.floor((Date.now() - new Date(new Date().getFullYear().toString()).getTime()) / 3600000); Object.assign(input, process.env); input.SHIELD_OR_AMO = input.SHIELD || input.IS_AMO ; console.log(JSON.stringify(input))' | mustache - addon/manifest.json.tmpl > addon/manifest.json",
     "build:buildSettings": "node -e 'console.log(JSON.stringify(process.env))' | mustache - addon/buildSettings.js.tmpl > addon/build/buildSettings.js",
-    "build:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl' && zip -r web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` experiment",
+    "build:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl'",
     "build-amo": "npm-run-all build-amo:*",
     "build-amo:buildSettings": "IS_AMO=1 npm-run-all build:buildSettings build:manifest",
     "build-amo:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl' --ignore-files 'build/testpilot-ga.js'",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
-    "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console --keep-profile-changes -f nightly",
+    "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console --keep-profile-changes -f nightly --pref=shieldStudy.logLevel=All",
     "test": "npm run lint"
   }
 }

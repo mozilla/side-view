@@ -1,81 +1,92 @@
 this.shieldSetup = (function () {
+
+  // Every CHECK_SIDEBAR_PERIOD we see if the sidebar is open, and send a usage telemetry if it is
+  // We also look for any normal events
+  const CHECK_SIDEBAR_PERIOD = 1000 * 60 * 60; // 1 hour
+  // And then if we find something, we send a telemetry event, but only this often:
+  const SEND_OPEN_TELEMETRY_LIMIT = 1000 * 60 * 60 * 24; // 1 day
   let exports = {};
 
-  let hasUsedSideViewInShield = false;
-  exports.sendShieldEvent = function(args) {
-    if (!args.ni) {
-      // FIXME: I'm not sure this is the right way to determine this:
-      hasUsedSideViewInShield = true;
-    }
+  exports.sendShieldEvent = async function(args) {
     if (args.ec === "startup") {
       browser.study.sendTelemetry({message: "addon_init"});
     } else if (args.ea === "load-url") {
       // Any kind of load event uses ea=load-url (pageAction, browserAction, contextMenu, etc)
-      browser.study.sendTelemetry({message: "uri_to_sv", uri_sent: true});
+      try {
+        flagUsed();
+        await browser.study.sendTelemetry({message: "uri_to_sv", uri_sent: "true"});
+      } catch (e) {
+        console.warn("Failure in sendTelemetry:", String(e), e.stack);
+      }
     }
   };
 
-  setInterval(() => {
-    if (hasUsedSideViewInShield) {
-      browser.study.sendTelemetry({message: "panel_used_hourly_poll", panel_used: true});
+  let lastUsed = null;
+
+  function flagUsed() {
+    if (!lastUsed || Date.now() - lastUsed >= SEND_OPEN_TELEMETRY_LIMIT) {
+      browser.study.sendTelemetry({message: "panel_used_today", panel_used: "true"});
+      lastUsed = Date.now();
     }
-  }, 1000 * 60 * 60);
+  }
+
+  setInterval(async () => {
+    if (await browser.sidebarAction.isOpen({})) {
+      flagUsed();
+    }
+  }, CHECK_SIDEBAR_PERIOD);
 
   async function init() {
-    browser.study.setup({
-      activeExperimentName: browser.runtime.id,
-      studyType: "shield",
-      telemetry: {
-        send: true,
-        // Marks pings with testing=true.  Set flag to `true` before final release
-        removeTestingFlag: false,
-      },
-      endings: {
-        /** standard endings */
-        "user-disable": {
-          baseUrls: [
-            // FIXME: put in correct URL:
-            "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=user-disable",
-          ],
+    try {
+      await browser.study.setup({
+        activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
+        studyType: "shield",
+        telemetry: {
+          send: true,
+          // Marks pings with testing=true.  Set flag to `true` before final release
+          removeTestingFlag: false,
         },
-        ineligible: {
-          baseUrls: [],
+        endings: {
+          /** standard endings */
+          "user-disable": {
+            baseUrls: [
+              // FIXME: put in correct URL:
+              "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=user-disable",
+            ],
+          },
+          ineligible: {
+            baseUrls: [],
+          },
+          expired: {
+            baseUrls: [
+              // FIXME: put in correct URL
+              "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=expired",
+            ],
+          },
+          /** Study specific endings */
+          "user-used-the-feature": {
+            baseUrls: [
+              // FIXME: do we want this?
+              // If we do, we have to use browser.study.endStudy("user-used-the-feature")
+              "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=user-used-the-feature",
+            ],
+            category: "ended-positive",
+          },
         },
-        expired: {
-          baseUrls: [
-            // FIXME: put in correct URL
-            "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=expired",
-          ],
+        weightedVariations: [
+          {
+            name: "feature-active",
+            weight: 1,
+          },
+        ],
+        // maximum time that the study should run, from the first run
+        expire: {
+          days: 365,
         },
-        /** Study specific endings */
-        "user-used-the-feature": {
-          baseUrls: [
-            // FIXME: do we want this?
-            // If we do, we have to use browser.study.endStudy("user-used-the-feature")
-            "https://qsurvey.mozilla.com/s3/Shield-Study-Example-Survey/?reason=user-used-the-feature",
-          ],
-          category: "ended-positive",
-        },
-      },
-      weightedVariations: [
-        {
-          name: "feature-active",
-          weight: 1.5,
-        },
-        {
-          name: "feature-passive",
-          weight: 1.5,
-        },
-        {
-          name: "control",
-          weight: 1,
-        },
-      ],
-      // maximum time that the study should run, from the first run
-      expire: {
-        days: 14,
-      },
-    });
+      });
+    } catch (e) {
+      console.warn("Error in Shield init():", String(e), e.stack);
+    }
   }
 
   init();

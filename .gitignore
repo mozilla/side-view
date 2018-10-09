@@ -3,6 +3,6 @@ web-ext-artifacts
 addon.xpi
 addon/build
 addon/manifest.json
-/experiment/study
+/addon/experiment/study
 .DS_Store
 /Profile

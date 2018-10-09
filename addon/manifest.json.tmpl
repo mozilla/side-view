@@ -22,19 +22,19 @@
     "experiment_apis": {
       {{#SHIELD}}
       "study": {
-        "schema": "../experiment/study/schema.json",
+        "schema": "./experiment/study/schema.json",
         "parent": {
           "scopes": ["addon_parent"],
-          "script": "../experiment/study/api.js",
-          "paths": [["study", "studyDebug"]]
+          "script": "./experiment/study/api.js",
+          "paths": [["study"], ["studyDebug"]]
         }
       },
       {{/SHIELD}}
       "sideview": {
-        "schema": "../experiment/schema.json",
+        "schema": "./experiment/schema.json",
         "parent": {
           "scopes": ["addon_parent"],
-          "script": "../experiment/api.js",
+          "script": "./experiment/api.js",
           "paths": [["sideview"]]
         }
       }
