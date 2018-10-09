@@ -86,14 +86,14 @@ sendEvent({
 
 browser.contextMenus.create({
   id: "open-in-sidebar",
-  title: "Open in sidebar",
+  title: "Open in Side View",
   contexts: ["page", "tab", "bookmark"],
   documentUrlPatterns: ["<all_urls>"],
 });
 
 browser.contextMenus.create({
   id: "open-link-in-sidebar",
-  title: "Open link in sidebar",
+  title: "Open link in Side View",
   // FIXME: could add "bookmark", but have to fetch by info.bookmarkId
   contexts: ["link"],
   documentUrlPatterns: ["<all_urls>"],
