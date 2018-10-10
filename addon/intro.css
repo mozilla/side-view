@@ -1,0 +1,13 @@
+.slide {
+  height: 200px;
+  width: 300px;
+  border: 2px dotted #f00;
+}
+
+.slide-hidden {
+  display: none;
+}
+
+button.selected {
+  font-weight: bold;
+}
