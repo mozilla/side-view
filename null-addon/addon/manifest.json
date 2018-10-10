@@ -1,0 +1,33 @@
+{
+  "manifest_version": 2,
+  "name": "Side View Control",
+  "version": "0.1",
+  "description": "This is an empty add-on that has no functionality",
+  "icons": {
+    // "48": "side-view.png",
+    // "96": "side-view.png"
+  },
+  "author": "Mozilla (https://mozilla.org/)",
+  "homepage_url": "https://github.com/mozilla/side-view/",
+  "applications": {
+    "gecko": {
+      "id": "side-view-control@shield.mozilla.org",
+      "strict_min_version": "57.0a1"
+    }
+  },
+  "experiment_apis": {
+    "study": {
+      "schema": "./experiment/study/schema.json",
+      "parent": {
+        "scopes": ["addon_parent"],
+        "script": "./experiment/study/api.js",
+        "paths": [["study"]]
+      }
+    }
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  }
+}

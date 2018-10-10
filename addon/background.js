@@ -1,4 +1,4 @@
-/* global TestPilotGA, buildSettings */
+/* global TestPilotGA, buildSettings, shieldSetup */
 
 const FIREFOX_VERSION = /rv:([0-9.]+)/.exec(navigator.userAgent)[1];
 
@@ -47,7 +47,7 @@ async function sendEvent(args) {
     return;
   }
   if (isShield) {
-    console.info("Aborting event for Shield");
+    shieldSetup.sendShieldEvent(args);
     return;
   }
   if (args.forUrl || sidebarUrl) {

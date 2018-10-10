@@ -1,8 +1,9 @@
 node_modules
 web-ext-artifacts
-addon.xpi
+addon*.xpi
 addon/build
 addon/manifest.json
-/experiment/study
+/addon/experiment/study
+/null-addon/addon/experiment
 .DS_Store
 /Profile
