@@ -7,6 +7,10 @@ this.shieldSetup = (function () {
   const SEND_OPEN_TELEMETRY_LIMIT = 1000 * 60 * 60 * 24; // 1 day
   let exports = {};
   let surveyParameters;
+  const INSTALL_DATE_SURVEY_TIME = 1000 * 60 * 60 * 24 * 14; // 14 days
+  const INSTALL_USE_SURVEY_REQUIREMENT = 2; // Must have used for 2 days
+  let installedDate;
+  let hasSeenMidwaySurvey = false;
 
   // load-url events can happen a few in a sequence, but we only want to report it once,
   // this timer keeps us from over-reporting:
@@ -54,6 +58,29 @@ this.shieldSetup = (function () {
     }
   }, CHECK_SIDEBAR_PERIOD);
 
+  async function loadInstalledDate() {
+    let result = await browser.storage.local.get(["installedDate", "hasSeenMidwaySurvey"]);
+    if (result.installedDate) {
+      installedDate = result.installedDate;
+    } else {
+      installedDate = Date.now();
+      await browser.storage.local.set({installedDate});
+    }
+    if (result.hasSeenMidwaySurvey) {
+      hasSeenMidwaySurvey = result.hasSeenMidwaySurvey;
+    }
+  }
+
+  async function maybeOpenkMidwaySurvey() {
+    if (!hasSeenMidwaySurvey && Date.now() - installedDate >= INSTALL_DATE_SURVEY_TIME && surveyParameters.panel_days >= INSTALL_USE_SURVEY_REQUIREMENT) {
+      // The person is eligable for the midway survey
+      let url = `https://qsurvey.mozilla.com/s3/side-view-shield-study/?${surveyQueryString("midway")}`;
+      await browser.tabs.create({url});
+      hasSeenMidwaySurvey = true;
+      await browser.storage.local.set({hasSeenMidwaySurvey});
+    }
+  }
+
   async function loadSurveyParameters() {
     let result = await browser.storage.local.get("surveyParameters");
     if (result.surveyParameters) {
@@ -82,7 +109,9 @@ this.shieldSetup = (function () {
 
   async function init() {
     try {
+      await loadInstalledDate();
       await loadSurveyParameters();
+      await maybeOpenkMidwaySurvey();
       await browser.study.setup({
         activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
         studyType: "shield",
