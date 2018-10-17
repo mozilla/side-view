@@ -70,7 +70,7 @@ this.shieldSetup = (function () {
         ],
         // maximum time that the study should run, from the first run
         expire: {
-          days: 365,
+          days: 42,
         },
       });
     } catch (e) {
