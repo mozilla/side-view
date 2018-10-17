@@ -14,7 +14,7 @@ this.shieldSetup = (function () {
       // Any kind of load event uses ea=load-url (pageAction, browserAction, contextMenu, etc)
       try {
         flagUsed();
-        await browser.study.sendTelemetry({message: "uri_to_sv", uri_sent: "true"});
+        await browser.study.sendTelemetry({message: "uri_to_sv"});
       } catch (e) {
         console.warn("Failure in sendTelemetry:", String(e), e.stack);
       }
@@ -25,7 +25,7 @@ this.shieldSetup = (function () {
 
   function flagUsed() {
     if (!lastUsed || Date.now() - lastUsed >= SEND_OPEN_TELEMETRY_LIMIT) {
-      browser.study.sendTelemetry({message: "panel_used_today", panel_used: "true"});
+      browser.study.sendTelemetry({message: "panel_used_today"});
       lastUsed = Date.now();
     }
   }
