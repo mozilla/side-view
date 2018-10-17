@@ -354,13 +354,10 @@ async function increaseSidebarMaxWidth() {
 }
 
 function showOnboardingBadge() {
-  browser.browserAction.setBadgeText({text: "New"});
-  browser.browserAction.setBadgeBackgroundColor({color: "#0a84ff"});
   function onBrowserActionClick() {
     browser.browserAction.setPopup({popup: "intro.html"});
     browser.browserAction.openPopup();
     browser.browserAction.onClicked.removeListener(onBrowserActionClick);
-    browser.browserAction.setBadgeText({text: ""});
     browser.storage.local.set({hasBeenOnboarded: true});
     browser.browserAction.setPopup({popup: "popup.html"});
   }
