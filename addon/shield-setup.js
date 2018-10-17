@@ -61,15 +61,6 @@ this.shieldSetup = (function () {
               "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=expired",
             ],
           },
-          /** Study specific endings */
-          "user-used-the-feature": {
-            baseUrls: [
-              // FIXME: do we want this?
-              // If we do, we have to use browser.study.endStudy("user-used-the-feature")
-              "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=user-used-the-feature",
-            ],
-            category: "ended-positive",
-          },
         },
         weightedVariations: [
           {
