@@ -18,6 +18,8 @@ this.shieldSetup = (function () {
       } catch (e) {
         console.warn("Failure in sendTelemetry:", String(e), e.stack);
       }
+    } else if (args.ea === "onboarding-shown") {
+      browser.study.sendTelemetry({message: "onboarding_shown"});
     }
   };
 

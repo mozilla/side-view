@@ -50,3 +50,9 @@ next.addEventListener("click", () => {
 });
 
 selectSlide(currentSlide);
+
+browser.runtime.sendMessage({
+  type: "sendEvent",
+  ec: "interface",
+  ea: "onboarding-shown",
+});

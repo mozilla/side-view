@@ -51,6 +51,13 @@ ea: loaded-width
 ni: true
 ```
 
+##### When onboarding is shown
+
+```
+ec: interface
+ea: onboarding-shown
+```
+
 ##### When the sidebar experiment fails to load
 
 When the experiment fails to load. The experiment may fail to be present (some loading error), or may have an exception while running
