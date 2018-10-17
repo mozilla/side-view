@@ -22,31 +22,35 @@ for (let el of document.querySelectorAll(".slide")) {
 }
 
 let previous = document.querySelector("#previous");
+let next = document.querySelector("#next");
+let done = document.querySelector("#done");
 
 previous.addEventListener("click", () => {
   currentSlide = Math.max(0, currentSlide - 1);
   if (currentSlide === 0) {
-    document.querySelector("#previous").classList.add("button-invisible");
+    previous.classList.add("button-invisible");
   }
   if (currentSlide === foundSlides - 2) {
-    document.querySelector("#next").classList.remove("button-hidden");
-    document.querySelector("#done").classList.add("button-hidden");
+    next.classList.remove("button-hidden");
+    done.classList.add("button-hidden");
   }
   selectSlide(currentSlide);
 });
 
-let next = document.querySelector("#next");
-
 next.addEventListener("click", () => {
   currentSlide = Math.min(foundSlides - 1, currentSlide + 1);
   if (currentSlide === 1) {
-    document.querySelector("#previous").classList.remove("button-invisible");
+    previous.classList.remove("button-invisible");
   }
   if (currentSlide === foundSlides - 1) {
-    document.querySelector("#next").classList.add("button-hidden");
-    document.querySelector("#done").classList.remove("button-hidden");
+    next.classList.add("button-hidden");
+    done.classList.remove("button-hidden");
   }
   selectSlide(currentSlide);
+});
+
+done.addEventListener("click", () => {
+  window.close();
 });
 
 selectSlide(currentSlide);
