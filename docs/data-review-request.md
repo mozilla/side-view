@@ -48,7 +48,16 @@ We have a small number of telemetry measurements. These are documented here: htt
     <td>Category 2</td>
     <td>None</td>
   </tr>
+  <tr>
+    <td>Survey parameters: total uri_count, onboarding boolean, days used</td>
+    <td>Category 2</td>
+    <td>None</td>
+  </tr>
 </table>
+
+Note the "survey parameters" are query string parameters we append to the survey (and collect, if the survey is submitted). The survey is held at a mid-point (two weeks after second day of use), or at the end of the study (including uninstalling).
+
+Note also we are currently collecting all telemetry identically in normal and Private Browsing modes.
 
 **6) How long will this data be collected?  Choose one of the following:**
 
@@ -56,7 +65,7 @@ The Shield experiment will be deployed for 6 weeks.
 
 **7) What populations will you measure?**
 
-Firefox Release and Nightly, english locales. Existing Test Pilot Side View users will be exluded.
+Firefox Release and Nightly, English locales. Existing Test Pilot Side View users will be excluded.
 
 **8) If this data collection is default on, what is the opt-out mechanism for users?**
 
