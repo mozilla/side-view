@@ -71,7 +71,7 @@ this.shieldSetup = (function () {
     }
   }
 
-  async function maybeOpenkMidwaySurvey() {
+  async function maybeOpenMidwaySurvey() {
     if (!hasSeenMidwaySurvey && Date.now() - installedDate >= INSTALL_DATE_SURVEY_TIME && surveyParameters.panel_days >= INSTALL_USE_SURVEY_REQUIREMENT) {
       // The person is eligable for the midway survey
       let url = `https://qsurvey.mozilla.com/s3/side-view-shield-study/?${surveyQueryString("midway")}`;
@@ -111,7 +111,7 @@ this.shieldSetup = (function () {
     try {
       await loadInstalledDate();
       await loadSurveyParameters();
-      await maybeOpenkMidwaySurvey();
+      await maybeOpenMidwaySurvey();
       await browser.study.setup({
         activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
         studyType: "shield",
