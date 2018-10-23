@@ -118,7 +118,7 @@ this.shieldSetup = (function () {
         telemetry: {
           send: true,
           // Marks pings with testing=true.  Set flag to `true` before final release
-          removeTestingFlag: false,
+          removeTestingFlag: true,
         },
         endings: {
           /** standard endings */
