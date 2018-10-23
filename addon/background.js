@@ -354,10 +354,12 @@ async function increaseSidebarMaxWidth() {
 }
 
 function showOnboardingBadge() {
+  browser.browserAction.setIcon({path: "side-view-onboarding.svg"});
   function onBrowserActionClick() {
     browser.browserAction.setPopup({popup: "intro.html"});
     browser.browserAction.openPopup();
     browser.browserAction.onClicked.removeListener(onBrowserActionClick);
+    browser.browserAction.setIcon({path: "side-view.svg"});
     browser.storage.local.set({hasBeenOnboarded: true});
     browser.browserAction.setPopup({popup: "popup.html"});
   }
