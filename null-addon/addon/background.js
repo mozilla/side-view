@@ -6,9 +6,23 @@ async function init() {
       telemetry: {
         send: true,
         // Marks pings with testing=true.  Set flag to `true` before final release
-        removeTestingFlag: false,
+        removeTestingFlag: true,
       },
       endings: {
+        /** standard endings */
+        "user-disable": {
+          baseUrls: [
+            "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=control",
+          ],
+        },
+        ineligible: {
+          baseUrls: [],
+        },
+        expired: {
+          baseUrls: [
+            "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=control",
+          ],
+        },
       },
       weightedVariations: [
         {
@@ -18,7 +32,7 @@ async function init() {
       ],
       // maximum time that the study should run, from the first run
       expire: {
-        days: 365,
+        days: 42,
       },
     });
     browser.study.sendTelemetry({message: "addon_control_init"});
