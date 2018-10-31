@@ -1,6 +1,7 @@
 async function init() {
   try {
     await browser.study.setup({
+      allowEnroll: true,
       activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
       studyType: "shield",
       telemetry: {
