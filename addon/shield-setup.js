@@ -19,6 +19,7 @@ this.shieldSetup = (function () {
 
   exports.sendShieldEvent = async function(args) {
     if (args.ec === "startup") {
+      await shieldIsSetup;
       browser.study.sendTelemetry({message: "addon_init"});
     } else if (args.ea === "load-url") {
       // Any kind of load event uses ea=load-url (pageAction, browserAction, contextMenu, etc)
@@ -28,6 +29,7 @@ this.shieldSetup = (function () {
       lastLoadUrl = Date.now();
       try {
         flagUsed();
+        await shieldIsSetup;
         await browser.study.sendTelemetry({message: "uri_to_sv"});
         surveyParameters.uri_count += 1;
         saveSurveyParameters();
@@ -35,6 +37,7 @@ this.shieldSetup = (function () {
         console.warn("Failure in sendTelemetry:", String(e), e.stack);
       }
     } else if (args.ea === "onboarding-shown") {
+      await shieldIsSetup;
       browser.study.sendTelemetry({message: "onboarding_shown"});
       surveyParameters.onboarded = 1;
       saveSurveyParameters();
@@ -51,12 +54,6 @@ this.shieldSetup = (function () {
       saveSurveyParameters();
     }
   }
-
-  setInterval(async () => {
-    if (await browser.sidebarAction.isOpen({})) {
-      flagUsed();
-    }
-  }, CHECK_SIDEBAR_PERIOD);
 
   async function loadInstalledDate() {
     let result = await browser.storage.local.get(["installedDate", "hasSeenMidwaySurvey"]);
@@ -107,12 +104,20 @@ this.shieldSetup = (function () {
     return params.toString();
   }
 
+  let _shieldIsSetupResolve;
+  let _shieldIsSetupReject;
+  let shieldIsSetup = new Promise((resolve, reject) => {
+    _shieldIsSetupResolve = resolve;
+    _shieldIsSetupReject = reject;
+  });
+
   async function init() {
     try {
       await loadInstalledDate();
       await loadSurveyParameters();
       await maybeOpenMidwaySurvey();
       await browser.study.setup({
+        allowEnroll: true,
         activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
         studyType: "shield",
         telemetry: {
@@ -147,7 +152,17 @@ this.shieldSetup = (function () {
           days: 42,
         },
       });
+
+      _shieldIsSetupResolve();
+
+      setInterval(async () => {
+        if (await browser.sidebarAction.isOpen({})) {
+          flagUsed();
+        }
+      }, CHECK_SIDEBAR_PERIOD);
+
     } catch (e) {
+      _shieldIsSetupReject();
       console.warn("Error in Shield init():", String(e), e.stack);
     }
   }
