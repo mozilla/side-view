@@ -22,7 +22,7 @@ const DEFAULT_DESKTOP_VERSION = 1;
 
 const MAX_RECENT_TABS = 5;
 const manifest = browser.runtime.getManifest();
-const isShield = manifest.applications.gecko.id.endsWith("shield.mozilla.org");
+const isShield = manifest.applications.gecko.id.startsWith("side-view-shield");
 const isAmo = buildSettings.isAmo;
 let sidebarUrl;
 let sidebarWidth;
