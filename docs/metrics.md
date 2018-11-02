@@ -207,3 +207,25 @@ cd1,
 cd2,
 cd3
 ```
+
+## Shield metrics
+
+Side View is being released for a [Shield Study](https://wiki.mozilla.org/Firefox/Shield). In the study random Firefox users from the general public are offered the Side View extension or a control extension.
+
+The metrics for this experiment are more limited, and are submitted via Firefox Telemetry. The following pings are made:
+
+* `addon_init`: sent at browser startup
+* `onboarding_shown`: sent when the user sees the onboarding in the popup
+* `uri_to_sv`: sent when a person interacts with Side View to send a page to the sidebar
+* `panel_used_today`: this ping is sent at most once every 24 hours, if the user used Side View within that 24 hours. It catches `uri_to_sv` events, as well as checking periodically if the Side View sidebar is open.
+* `addon_control_init`: people in the control send this ping at browser startup
+
+Additionally surveys are opened if the experiment expires (after 6 weeks), including control users; if the person uninstalls the add-on; and sometimes 14 days after the experiment starts, if the user has used the add-on for two or more days.
+
+The control users are sent to a plain survey with no special information. Other survey links include:
+
+* `onboarded`: a boolean, if the user had gone through onboarding
+* `panel_days`: the cumulative number of times `panel_used_today` occurred
+* `uri_count`: the cumulative number of `uri_to_sv`
+
+This data is only collected if the user submits the survey.
