@@ -4,8 +4,6 @@
   "version": "0.1",
   "description": "This is an empty add-on that has no functionality",
   "icons": {
-    // "48": "side-view.png",
-    // "96": "side-view.png"
   },
   "author": "Mozilla (https://mozilla.org/)",
   "homepage_url": "https://github.com/mozilla/side-view/",
@@ -15,6 +13,7 @@
       "strict_min_version": "57.0a1"
     }
   },
+  "hidden": true,
   "experiment_apis": {
     "study": {
       "schema": "./experiment/study/schema.json",

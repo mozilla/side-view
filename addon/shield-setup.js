@@ -149,8 +149,13 @@ this.shieldSetup = (function () {
         ],
         // maximum time that the study should run, from the first run
         expire: {
-          days: 42,
+          days: 28,
         },
+      });
+
+      browser.study.onEndStudy.addListener(async () => {
+        console.info("Uninstalling Side View study add-on (see about:studies)");
+        await browser.management.uninstallSelf();
       });
 
       _shieldIsSetupResolve();
