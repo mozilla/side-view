@@ -13,6 +13,7 @@
       "strict_min_version": "57.0a1"
     }
   },
+  "hidden": true,
   "experiment_apis": {
     "study": {
       "schema": "./experiment/study/schema.json",
