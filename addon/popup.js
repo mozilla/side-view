@@ -158,7 +158,7 @@ function element(selector) {
   return document.querySelector(selector);
 }
 
-if (buildSettings.isAmo) {
+if (buildSettings.isAmo || buildSettings.isShield) {
   element(".feedback-button").style.display = "none";
 } else {
   element(".feedback-button").addEventListener("click", () => {
