@@ -50,7 +50,7 @@ next.addEventListener("click", () => {
 });
 
 done.addEventListener("click", () => {
-  window.close();
+  location.href = "popup.html";
 });
 
 selectSlide(currentSlide);
