@@ -18,7 +18,7 @@ this.shieldSetup = (function () {
   const LAST_LOAD_URL_LIMIT = 1000; // 1 second
 
   exports.sendShieldEvent = async function(args) {
-    if (args.ec === "startup") {
+    if (args.ec === "startup" && args.ea === "startup") {
       await shieldIsSetup;
       browser.study.sendTelemetry({message: "addon_init"});
     } else if (args.ea === "load-url") {
