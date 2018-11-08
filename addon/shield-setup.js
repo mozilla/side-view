@@ -17,6 +17,23 @@ this.shieldSetup = (function () {
   let lastLoadUrl;
   const LAST_LOAD_URL_LIMIT = 1000; // 1 second
 
+  async function enableFeature(studyInfo) {
+    const { delayInMinutes } = studyInfo;
+    if (delayInMinutes !== undefined) {
+      const alarmName = `${browser.runtime.id}:studyExpiration`;
+      const alarmListener = async alarm => {
+        if (alarm.name === alarmName) {
+          browser.alarms.onAlarm.removeListener(alarmListener);
+          await browser.study.endStudy("expired");
+        }
+      };
+      browser.alarms.onAlarm.addListener(alarmListener);
+      browser.alarms.create(alarmName, {
+        delayInMinutes,
+      });
+    }
+  }
+
   exports.sendShieldEvent = async function(args) {
     if (args.ec === "startup" && args.ea === "startup") {
       await shieldIsSetup;
@@ -115,6 +132,8 @@ this.shieldSetup = (function () {
       await loadInstalledDate();
       await loadSurveyParameters();
       await maybeOpenMidwaySurvey();
+      browser.study.onReady.addListener(enableFeature);
+
       await browser.study.setup({
         allowEnroll: true,
         activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName

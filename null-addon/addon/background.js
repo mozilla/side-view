@@ -1,5 +1,24 @@
 async function init() {
+
+  async function enableFeature(studyInfo) {
+    const { delayInMinutes } = studyInfo;
+    if (delayInMinutes !== undefined) {
+      const alarmName = `${browser.runtime.id}:studyExpiration`;
+      const alarmListener = async alarm => {
+        if (alarm.name === alarmName) {
+          browser.alarms.onAlarm.removeListener(alarmListener);
+          await browser.study.endStudy("expired");
+        }
+      };
+      browser.alarms.onAlarm.addListener(alarmListener);
+      browser.alarms.create(alarmName, {
+        delayInMinutes,
+      });
+    }
+  }
+
   try {
+    browser.study.onReady.addListener(enableFeature);
     await browser.study.setup({
       allowEnroll: true,
       activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
