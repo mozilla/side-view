@@ -95,11 +95,10 @@ this.shieldSetup = (function () {
     await browser.storage.local.set({surveyParameters});
   }
 
-  function surveyQueryString(reason) {
+  function surveyQueryString() {
     let params = new URLSearchParams();
-    let keyValues = Object.assign({reason}, surveyParameters);
-    for (let key in keyValues) {
-      params.append(key, keyValues[key]);
+    for (let key in surveyParameters) {
+      params.append(key, surveyParameters[key]);
     }
     return params.toString();
   }
@@ -129,7 +128,7 @@ this.shieldSetup = (function () {
           /** standard endings */
           "user-disable": {
             baseUrls: [
-              `https://qsurvey.mozilla.com/s3/side-view-shield-study/?${surveyQueryString("user-disable")}`,
+              "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=user-disable",
             ],
           },
           ineligible: {
@@ -137,7 +136,7 @@ this.shieldSetup = (function () {
           },
           expired: {
             baseUrls: [
-              `https://qsurvey.mozilla.com/s3/side-view-shield-study/?${surveyQueryString("expired")}`,
+              "https://qsurvey.mozilla.com/s3/side-view-shield-study/?reason=expired",
             ],
           },
         },
@@ -153,9 +152,16 @@ this.shieldSetup = (function () {
         },
       });
 
-      browser.study.onEndStudy.addListener(async () => {
-        console.info("Uninstalling Side View study add-on (see about:studies)");
-        await browser.management.uninstallSelf();
+      browser.study.onEndStudy.addListener(async (event) => {
+        for (let url of event.urls) {
+          url = `${url}&${surveyQueryString()}`;
+          console.info("Opening Side View survey (for more information see about:studies):", url);
+          await browser.tabs.create({url});
+        }
+        if (event.shouldUninstall) {
+          console.info("Uninstalling Side View study add-on (see about:studies)");
+          await browser.management.uninstallSelf();
+        }
       });
 
       _shieldIsSetupResolve();

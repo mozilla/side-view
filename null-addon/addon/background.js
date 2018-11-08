@@ -38,8 +38,14 @@ async function init() {
     });
 
     browser.study.onEndStudy.addListener(async () => {
-      console.info("Uninstalling Side View study control add-on (see about:studies)");
-      await browser.management.uninstallSelf();
+      for (let url of event.urls) {
+        console.info("Opening Side View survey (for more information see about:studies):", url);
+        await browser.tabs.create({url});
+      }
+      if (event.shouldUninstall) {
+        console.info("Uninstalling Side View study add-on (see about:studies)");
+        await browser.management.uninstallSelf();
+      }
     });
 
     browser.study.sendTelemetry({message: "addon_control_init"});
