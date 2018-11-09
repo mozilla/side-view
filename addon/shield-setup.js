@@ -134,6 +134,18 @@ this.shieldSetup = (function () {
       await maybeOpenMidwaySurvey();
       browser.study.onReady.addListener(enableFeature);
 
+      browser.study.onEndStudy.addListener(async (event) => {
+        for (let url of event.urls) {
+          url = `${url}&${surveyQueryString()}`;
+          console.info("Opening Side View survey (for more information see about:studies):", url);
+          await browser.tabs.create({url});
+        }
+        if (event.shouldUninstall) {
+          console.info("Uninstalling Side View study add-on (see about:studies)");
+          await browser.management.uninstallSelf();
+        }
+      });
+
       await browser.study.setup({
         allowEnroll: true,
         activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
@@ -169,18 +181,6 @@ this.shieldSetup = (function () {
         expire: {
           days: 28,
         },
-      });
-
-      browser.study.onEndStudy.addListener(async (event) => {
-        for (let url of event.urls) {
-          url = `${url}&${surveyQueryString()}`;
-          console.info("Opening Side View survey (for more information see about:studies):", url);
-          await browser.tabs.create({url});
-        }
-        if (event.shouldUninstall) {
-          console.info("Uninstalling Side View study add-on (see about:studies)");
-          await browser.management.uninstallSelf();
-        }
       });
 
       _shieldIsSetupResolve();

@@ -19,6 +19,18 @@ async function init() {
 
   try {
     browser.study.onReady.addListener(enableFeature);
+
+    browser.study.onEndStudy.addListener(async () => {
+      for (let url of event.urls) {
+        console.info("Opening Side View survey (for more information see about:studies):", url);
+        await browser.tabs.create({url});
+      }
+      if (event.shouldUninstall) {
+        console.info("Uninstalling Side View study add-on (see about:studies)");
+        await browser.management.uninstallSelf();
+      }
+    });
+
     await browser.study.setup({
       allowEnroll: true,
       activeExperimentName: "side-view-1", // Note: the control add-on must have the same activeExperimentName
@@ -54,17 +66,6 @@ async function init() {
       expire: {
         days: 28,
       },
-    });
-
-    browser.study.onEndStudy.addListener(async () => {
-      for (let url of event.urls) {
-        console.info("Opening Side View survey (for more information see about:studies):", url);
-        await browser.tabs.create({url});
-      }
-      if (event.shouldUninstall) {
-        console.info("Uninstalling Side View study add-on (see about:studies)");
-        await browser.management.uninstallSelf();
-      }
     });
 
     browser.study.sendTelemetry({message: "addon_control_init"});
