@@ -28,5 +28,8 @@
     "scripts": [
       "background.js"
     ]
-  }
+  },
+  "permissions": [
+    "alarms"
+  ]
 }
