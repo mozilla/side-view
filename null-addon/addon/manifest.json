@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Side View Control",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "This is an empty add-on that has no functionality",
   "icons": {
   },
