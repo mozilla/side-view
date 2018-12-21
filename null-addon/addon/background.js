@@ -20,7 +20,7 @@ async function init() {
   try {
     browser.study.onReady.addListener(enableFeature);
 
-    browser.study.onEndStudy.addListener(async () => {
+    browser.study.onEndStudy.addListener(async (event) => {
       for (let url of event.urls) {
         console.info("Opening Side View survey (for more information see about:studies):", url);
         await browser.tabs.create({url});
