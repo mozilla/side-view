@@ -189,10 +189,6 @@ supply a favicon */
   text-decoration: none;
 }
 
-.mobile-toggle {
-  border-inline-end: 1px solid hsla(210, 4%, 10%, 0.14);
-}
-
 .toggle-disabled .mobile-toggle {
   display: none;
 }

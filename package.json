@@ -32,7 +32,7 @@
     "lint:styles": "stylelint ./addon/*.css",
     "build": "npm-run-all build:*",
     "build:manifest": "node -e 'let input = JSON.parse(fs.readFileSync(\"package.json\")); input.version = input.version.slice(0, -1) + Math.floor((Date.now() - new Date(new Date().getFullYear().toString()).getTime()) / 3600000); Object.assign(input, process.env); console.log(JSON.stringify(input))' | mustache - addon/manifest.json.tmpl > addon/manifest.json",
-    "build:buildSettings": "node -e 'console.log(JSON.stringify(process.env))' | mustache - addon/buildSettings.js.tmpl > addon/build/buildSettings.js",
+    "build:buildSettings": "mkdir -p addon/build/ && node -e 'console.log(JSON.stringify(process.env))' | mustache - addon/buildSettings.js.tmpl > addon/build/buildSettings.js",
     "build:web-ext": "web-ext build --source-dir=addon --overwrite-dest --ignore-files '*.tmpl'",
     "package": "npm run build && cp web-ext-artifacts/`ls -t1 web-ext-artifacts | head -n 1` addon.xpi",
     "run": "mkdir -p ./Profile && web-ext run --source-dir=addon -p ./Profile --browser-console --keep-profile-changes -f nightly",

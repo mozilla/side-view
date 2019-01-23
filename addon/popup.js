@@ -1,5 +1,4 @@
 /* globals buildSettings */
-let lastDisplayedUrl;
 let isDesktop = false;
 let recentTabs = [];
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
@@ -8,7 +7,6 @@ async function displayPage({url, title, favIconUrl}) {
   // Note this must be called in response to an event, so we can't call it in background.js:
   await browser.sidebarAction.open();
   renderTabListLastRendered = {};
-  lastDisplayedUrl = url;
   for (let eventName of rerenderEvents) {
     browser.tabs[eventName].removeListener(updateHome);
   }
