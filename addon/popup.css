@@ -174,7 +174,6 @@ supply a favicon */
   grid-template-columns: 1fr;
 }
 
-.feedback-button,
 .mobile-toggle {
   border: 0;
   align-items: center;
@@ -198,7 +197,6 @@ supply a favicon */
   display: none;
 }
 
-.feedback-button:hover,
 .mobile-toggle:hover {
   background: hsla(0, 0%, 80%, 0.4);
 }
@@ -255,13 +253,11 @@ supply a favicon */
   content: url(images/close-16-light.svg);
 }
 
-#panel.dark-theme .feedback-button,
 #panel.dark-theme .mobile-toggle {
   background-color: var(--dark-theme-superhighlight-color);
   color: var(--dark-theme-color);
 }
 
-#panel.dark-theme .feedback-button:hover,
 #panel.dark-theme .mobile-toggle:hover {
   background-color: hsla(0, 0%, 80%, 0.6);
 }
