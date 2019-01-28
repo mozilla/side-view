@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "Side View",
-    "version": "{{#SHIELD}}0.5rc5{{/SHIELD}}{{^SHIELD}}{{version}}{{/SHIELD}}",
+    "version": "{{version}}",
     "description": "{{description}}",
     "icons": {
       "48": "side-view.png",
@@ -11,44 +11,13 @@
     "homepage_url": "{{{homepage}}}",
     "applications": {
       "gecko": {
-        "id": {{#SHIELD}}"side-view-shield@mozilla.org"{{/SHIELD}}{{^SHIELD}}"side-view@mozilla.org"{{/SHIELD}},
+        "id": "side-view@mozilla.org",
         "strict_min_version": "57.0a1"
       }
     },
-    {{#SHIELD}}
-    "hidden": true,
-    {{/SHIELD}}
-    {{^IS_AMO}}
-    "experiment_apis": {
-      {{#SHIELD}}
-      "study": {
-        "schema": "./experiment/study/schema.json",
-        "parent": {
-          "scopes": ["addon_parent"],
-          "script": "./experiment/study/api.js",
-          "paths": [["study"]]
-        }
-      },
-      {{/SHIELD}}
-      "sideview": {
-        "schema": "./experiment/schema.json",
-        "parent": {
-          "scopes": ["addon_parent"],
-          "script": "./experiment/api.js",
-          "paths": [["sideview"]]
-        }
-      }
-    },
-    {{/IS_AMO}}
     "background": {
       "scripts": [
         "build/buildSettings.js",
-        {{^SHIELD_OR_AMO}}
-        "build/testpilot-ga.js",
-        {{/SHIELD_OR_AMO}}
-        {{#SHIELD}}
-        "shield-setup.js",
-        {{/SHIELD}}
         "background.js"
       ]
     },
@@ -59,9 +28,7 @@
       "browser_style": true
     },
     "sidebar_action": {
-      {{#SHIELD}}
       "open_at_install": false,
-      {{/SHIELD}}
       "default_icon": "side-view.svg",
       "default_title": "Side View",
       "default_panel": "sidebar.html",
@@ -76,9 +43,6 @@
     "web_accessible_resources": [
     ],
     "permissions": [
-      {{#SHIELD}}
-      "alarms",
-      {{/SHIELD}}
       "activeTab",
       "tabs",
       "<all_urls>",

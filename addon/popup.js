@@ -1,5 +1,4 @@
 /* globals buildSettings */
-let lastDisplayedUrl;
 let isDesktop = false;
 let recentTabs = [];
 const rerenderEvents = ["onUpdated", "onRemoved", "onCreated", "onMoved", "onDetached", "onAttached"];
@@ -8,7 +7,6 @@ async function displayPage({url, title, favIconUrl}) {
   // Note this must be called in response to an event, so we can't call it in background.js:
   await browser.sidebarAction.open();
   renderTabListLastRendered = {};
-  lastDisplayedUrl = url;
   for (let eventName of rerenderEvents) {
     browser.tabs[eventName].removeListener(updateHome);
   }
@@ -17,12 +15,6 @@ async function displayPage({url, title, favIconUrl}) {
     url,
     title,
     favIconUrl,
-  });
-  await sendEvent({
-    ec: "content",
-    ea: "load-url",
-    el: "child-page",
-    forUrl: url,
   });
   window.close();
 }
@@ -67,14 +59,6 @@ async function updateHome(event) {
 let renderTabListLastRendered = {};
 
 function _onTabClick(event, tabs, url, favIconUrl, index, title, eventLabel) {
-  sendEvent({
-    ec: "interface",
-    ea: "load-url",
-    el: eventLabel,
-    forUrl: url,
-    cd4: tabs.length,
-    cd5: index,
-  });
   displayPage({
     url,
     favIconUrl,
@@ -119,14 +103,7 @@ function renderTabList(tabs, containerSelector, eventLabel) {
     if (eventLabel === "recent-tab") {
       dismiss.addEventListener("click", async (event) => {
       event.stopPropagation(); // prevent the selection of tab
-       sendEvent({
-         ec: "interface",
-         ea: "dismiss-tab",
-         el: eventLabel,
-         cd4: tabs.length,
-         cd5: index,
-       });
-       await browser.runtime.sendMessage({
+      await browser.runtime.sendMessage({
         type: "dismissTab",
         index,
        });
@@ -147,41 +124,14 @@ function renderTabList(tabs, containerSelector, eventLabel) {
   }
 }
 
-function sendEvent(args) {
-  // We bucket to the nearest 50px:
-  args.cd1 = Math.round(window.innerWidth / 50) * 50;
-  args.type = "sendEvent";
-  browser.runtime.sendMessage(args);
-}
-
 function element(selector) {
   return document.querySelector(selector);
-}
-
-if (buildSettings.isAmo || buildSettings.isShield) {
-  element(".feedback-button").style.display = "none";
-} else {
-  element(".feedback-button").addEventListener("click", () => {
-    window.open("https://qsurvey.mozilla.com/s3/side-view?ref=doorhanger");
-    sendEvent({
-      ec: "interface",
-      ea: "button-click",
-      el: "feedback",
-      forUrl: lastDisplayedUrl,
-    });
-  });
 }
 
 element(".mobile-toggle").addEventListener("click", async () => {
   await browser.sidebarAction.open();
   await browser.runtime.sendMessage({
     type: "toggleDesktop",
-  });
-  sendEvent({
-    ec: "interface",
-    ea: "button-click",
-    // Note: background.js changes this label based on whether it's desktop or not
-    el: "toggle-desktop",
   });
 });
 
@@ -232,7 +182,7 @@ async function init() {
     } else if (message.type === "isDesktop") {
       isDesktop = message.isDesktop;
       updateHome();
-    } else if (["setDesktop", "sendEvent", "sidebarOpened", "sidebarOpenedPage", "sidebarDisplayedHome", "getRecentTabs"].includes(message.type)) {
+    } else if (["setDesktop", "sidebarOpenedPage", "sidebarDisplayedHome", "getRecentTabs"].includes(message.type)) {
       // These intended to go to the backgrond and can be ignored here
     } else {
       console.error("Got unexpected message:", message);
