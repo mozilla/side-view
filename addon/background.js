@@ -37,6 +37,12 @@ browser.contextMenus.create({
   documentUrlPatterns: ["<all_urls>"],
 });
 
+browser.commands.onCommand.addListener(async command => {
+  if (command === "toggle-sidebar") {
+    await browser.sidebarAction.toggle();
+  }
+});
+
 browser.contextMenus.onClicked.addListener(async (info, tab) => {
   let url;
   let favIconUrl;
