@@ -14,9 +14,11 @@ const DEFAULT_DESKTOP_SITES = [
   "www.metacafe.com",
   "myspace.com",
   "imgur.com",
+  "meet.google.com",
+  "meet.app.goo.gl",
 ];
 
-const DEFAULT_DESKTOP_VERSION = 1;
+const DEFAULT_DESKTOP_VERSION = 2;
 
 const MAX_RECENT_TABS = 5;
 let sidebarUrl;
