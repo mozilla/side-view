@@ -7,7 +7,7 @@
     "url": "https://github.com/mozilla/side-view/issues"
   },
   "devDependencies": {
-    "addons-linter": "^1.3.2",
+    "addons-linter": "^7.3.0",
     "eslint": "^5.5.0",
     "eslint-plugin-mozilla": "^0.15.4",
     "eslint-plugin-no-unsanitized": "^3.0.2",
