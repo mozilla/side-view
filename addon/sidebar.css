@@ -3,7 +3,7 @@ html {
   font: message-box;
   font-size: 15px;
   overflow: hidden;
-  color: rgb(12, 12, 13);
+  color: rgb(12 12 13);
 }
 
 :root {
@@ -46,7 +46,7 @@ body {
 }
 
 .subtitle a {
-  color: rgb(12, 12, 13);
+  color: rgb(12 12 13);
 }
 
 .instructions {
@@ -87,7 +87,7 @@ body {
   width: 100%;
   max-height: 174px;
   height: 100%;
-  background: url(images/in-content-clouds.png) no-repeat center;
+  background: url("images/in-content-clouds.png") no-repeat center;
   background-size: contain;
   position: absolute;
 }
@@ -95,7 +95,7 @@ body {
 .graphic__browser {
   animation: fade-in-down forwards 1000ms cubic-bezier(0.22, 0.92, 0.62, 1);
   animation-delay: 100ms;
-  background: url(images/in-content-icon.png) no-repeat center;
+  background: url("images/in-content-icon.png") no-repeat center;
   background-size: contain;
   max-width: 284px;
   width: 100%;
@@ -143,9 +143,9 @@ body {
 
 .default-link {
   appearance: none;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgb(0 0 0 / 0%);
   border: 0;
-  color: rgb(10, 141, 255);
+  color: rgb(10 141 255);
   cursor: pointer;
   font-size: 15px;
   margin: 6px 0;
@@ -161,7 +161,7 @@ body {
 
 .default-link:hover,
 .default-link:focus {
-  color: rgb(0, 96, 223);
+  color: rgb(0 96 223);
   text-decoration: underline;
 }
 
@@ -186,5 +186,5 @@ body {
 }
 
 .page.dark-theme .graphic__clouds {
-  background: url(images/in-content-clouds-dark.png);
+  background: url("images/in-content-clouds-dark.png");
 }
