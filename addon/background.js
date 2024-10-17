@@ -78,7 +78,7 @@ async function openUrl(url) {
   browser.runtime.sendMessage({
     type: "isDesktop",
     isDesktop,
-  }).catch((error) => {
+  }).catch(() => {
     // If the popup is not open this gives an error, but we don't care
   });
   browser.sidebarAction.setPanel({panel: url});

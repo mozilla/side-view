@@ -58,7 +58,7 @@ async function updateHome(event) {
 
 let renderTabListLastRendered = {};
 
-function _onTabClick(event, tabs, url, favIconUrl, index, title, eventLabel) {
+function _onTabClick(event, tabs, url, favIconUrl, index, title, _eventLabel) {
   displayPage({
     url,
     favIconUrl,

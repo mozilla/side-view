@@ -27,7 +27,7 @@ async function init() {
   };
 
   checkForDark();
-  browser.management.onEnabled.addListener((info) => {
+  browser.management.onEnabled.addListener(() => {
     checkForDark();
   });
 }

@@ -1,3 +1,4 @@
+/* eslint-env node */
 module.exports = {
   "env": {
     "es6": true,
@@ -17,8 +18,6 @@ module.exports = {
   "root": true,
   "rules": {
     "eqeqeq": "error",
-    "no-console": "warn",
-    "space-before-function-paren": "off",
-    "no-console": ["error", {"allow": ["error", "info", "trace", "warn"]}]
+    "space-before-function-paren": "off"
   }
 };

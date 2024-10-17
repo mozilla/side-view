@@ -7,7 +7,7 @@ html {
 :root {
   --dark-theme-background-color: #4a4a4f;
   --dark-theme-highlight-color: #6d6d6f;
-  --dark-theme-superhighlight-color: hsla(0, 0%, 80%, 0.45);
+  --dark-theme-superhighlight-color: hsl(0deg 0% 80% / 45%);
   --dark-theme-color: #fff;
   --dark-theme-links: #45a1ff;
 }
@@ -40,7 +40,7 @@ body {
 }
 
 .separator {
-  background: hsla(210, 4%, 10%, 0.14);
+  background: hsl(210deg 4% 10% / 14%);
   height: 1px;
   margin: 6px 0;
 }
@@ -133,7 +133,7 @@ body {
 
 .tab__dismiss:hover,
 .tab__dismiss:focus {
-  background: rgba(224, 224, 225, 0.9);
+  background: rgb(224 224 225 / 90%);
 }
 
 .tab__dismiss:hover,
@@ -146,14 +146,14 @@ body {
 }
 
 .tab__dismiss::after {
-  content: url(images/close-16.svg);  /* close symbol */
+  content: url("images/close-16.svg");  /* close symbol */
 }
 
 /* this is a hack if, for any reason, a site does not
 supply a favicon */
 
-.tab__image[style*=undefined] {
-  background-image: url(images/globe.svg) !important;
+.tab__image[style*="undefined"] {
+  background-image: url("images/globe.svg") !important;
 }
 
 .tab__text {
@@ -164,7 +164,7 @@ supply a favicon */
 }
 
 .panel-footer {
-  border-top: 1px solid hsla(210, 4%, 10%, 0.14);
+  border-top: 1px solid hsl(210deg 4% 10% / 14%);
   display: flex;
   flex: 0 0 41px;
   margin: 6px 0 0;
@@ -177,8 +177,8 @@ supply a favicon */
 .mobile-toggle {
   border: 0;
   align-items: center;
-  background: hsla(0, 0%, 80%, 0.3);
-  color: rgb(26, 26, 26);
+  background: hsl(0deg 0% 80% / 30%);
+  color: rgb(26 26 26);
   cursor: default;
   display: flex;
   flex: 1;
@@ -194,7 +194,7 @@ supply a favicon */
 }
 
 .mobile-toggle:hover {
-  background: hsla(0, 0%, 80%, 0.4);
+  background: hsl(0deg 0% 80% / 40%);
 }
 
 #getting-started {
@@ -246,7 +246,7 @@ supply a favicon */
 }
 
 #panel.dark-theme .tab__dismiss::after {
-  content: url(images/close-16-light.svg);
+  content: url("images/close-16-light.svg");
 }
 
 #panel.dark-theme .mobile-toggle {
@@ -255,7 +255,7 @@ supply a favicon */
 }
 
 #panel.dark-theme .mobile-toggle:hover {
-  background-color: hsla(0, 0%, 80%, 0.6);
+  background-color: hsl(0deg 0% 80% / 60%);
 }
 
 #recent-tabs[style$="none;"] + #open-tabs {
