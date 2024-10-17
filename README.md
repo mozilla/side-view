@@ -20,4 +20,4 @@ This adds a context menu item: **Open in sidebar** or **Open link in sidebar**. 
 
 ## Credits
 
-[Anthony_f](https://addons.mozilla.org/firefox/user/Anthony_f/)'s [Sidebar for Google Search](https://addons.mozilla.org/en-US/firefox/addon/sidebar-for-google-search/) inspired this add-on's approach.
+[Anthony_f](https://addons.mozilla.org/firefox/user/Anthony_f/)'s [Sidebar for Google Search](https://addons.mozilla.org/firefox/addon/sidebar-for-google-search/) inspired this add-on's approach.
