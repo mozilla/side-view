@@ -2,7 +2,7 @@ version: 2.0
 jobs:
     package:
         docker:
-            - image: circleci/node:8.9.4
+            - image: circleci/node:20.18
         steps:
             - checkout
             - restore_cache:
